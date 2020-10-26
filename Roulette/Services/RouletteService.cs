@@ -1,4 +1,6 @@
-﻿using Roulette.Repositories;
+﻿using Roulette.Models.Requests;
+using Roulette.Models.Responses;
+using Roulette.Repositories;
 using System;
 using System.Threading.Tasks;
 
@@ -18,7 +20,22 @@ namespace Roulette.Services
             return await _gameRepository.CreateNewGame();
         }
 
-        public async Task CloseBets()
+        public Task CloseBets(CloseBetsRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddBet(AddBetRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveBet(RemoveBetRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PlayGameResponse> PlayGame(PlayGameRequest request)
         {
             throw new NotImplementedException();
         }

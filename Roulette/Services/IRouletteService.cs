@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Roulette.Models.Requests;
+using Roulette.Models.Responses;
+using System;
 using System.Threading.Tasks;
 
 namespace Roulette.Services
@@ -7,6 +9,12 @@ namespace Roulette.Services
     {
         Task<Guid> CreateNewGame();
 
-        Task CloseBets();
+        Task CloseBets(CloseBetsRequest request);
+
+        Task AddBet(AddBetRequest request);
+
+        Task RemoveBet(RemoveBetRequest request);
+
+        Task<PlayGameResponse> PlayGame(PlayGameRequest request);
     }
 }

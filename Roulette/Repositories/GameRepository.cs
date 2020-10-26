@@ -1,14 +1,13 @@
 ﻿using Roulette.Models;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Roulette.Repositories
 {
     // although the methods in this class don't do anything asynchronous, in reality they would with database calls,
     // so I have made the methods return a Task
-    public class GameRepository: IGameRepository
+    public class GameRepository : IGameRepository
     {
         private readonly ConcurrentDictionary<Guid, Game> _games = new ConcurrentDictionary<Guid, Game>();
 
@@ -33,7 +32,7 @@ namespace Roulette.Repositories
 
         public async Task<Game> GetById(Guid id)
         {
-            if(!_games.TryGetValue(id, out var game))
+            if (!_games.TryGetValue(id, out var game))
             {
                 //TODO
                 throw new Exception();

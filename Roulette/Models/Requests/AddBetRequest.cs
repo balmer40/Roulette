@@ -19,7 +19,7 @@ namespace Roulette.Models.Requests
         [Range(0, 36)]
         public int Position { get; }
 
-        [Range(0, 10000)] //only allow maximum of 10k bets
+        [Range(0, 10000)] //only allow maximum of 10k bet
         public double Amount { get; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
