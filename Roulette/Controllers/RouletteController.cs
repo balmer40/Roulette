@@ -1,12 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
 using Roulette.Models.Requests;
 using Roulette.Models.Responses;
 using Roulette.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -53,8 +48,10 @@ namespace Roulette.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [HttpPost("close-bets")]
-        public IActionResult CloseBets(CloseBetsRequest request)
+        public async Task<IActionResult> CloseBets(CloseBetsRequest request)
         {
+            await _rouletteService.CloseBets(request);
+
             return Ok();
         }
 
@@ -67,12 +64,12 @@ namespace Roulette.Controllers
         /// <response code="400">Bad request</response>
         /// <response code="401">Game not found</response>
         /// <response code="500">Unhandled exception</response>
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(AddBetResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [HttpPost("add-bet")]
-        public IActionResult AddBet()
+        public async Task<IActionResult> AddBet(AddBetRequest request)
         {
             return Ok();
         }
@@ -91,7 +88,7 @@ namespace Roulette.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [HttpPost("remove-bet")]
-        public IActionResult RemoveBet()
+        public async Task<IActionResult> RemoveBet(RemoveBetRequest request)
         {
             return Ok();
         }
@@ -110,7 +107,7 @@ namespace Roulette.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [HttpPost("play-game")]
-        public IActionResult PlayGame(PlayGameRequest request)
+        public async Task<IActionResult> PlayGame(PlayGameRequest request)
         {
             return Ok();
         }

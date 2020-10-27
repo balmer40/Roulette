@@ -11,7 +11,7 @@ namespace Roulette.Services
 
         Task CloseBets(CloseBetsRequest request);
 
-        Task AddBet(AddBetRequest request);
+        Task<AddBetResponse> AddBet(AddBetRequest request);
 
         Task RemoveBet(RemoveBetRequest request);
 

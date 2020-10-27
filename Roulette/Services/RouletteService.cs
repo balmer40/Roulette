@@ -20,12 +20,12 @@ namespace Roulette.Services
             return await _gameRepository.CreateNewGame();
         }
 
-        public Task CloseBets(CloseBetsRequest request)
+        public async Task CloseBets(CloseBetsRequest request)
         {
-            throw new NotImplementedException();
+            await _gameRepository.CloseBets(request.GameId);
         }
 
-        public Task AddBet(AddBetRequest request)
+        public Task<AddBetResponse> AddBet(AddBetRequest request)
         {
             throw new NotImplementedException();
         }

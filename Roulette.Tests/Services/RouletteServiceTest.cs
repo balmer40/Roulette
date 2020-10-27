@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NSubstitute;
+using Roulette.Models.Requests;
 using Roulette.Repositories;
 using Roulette.Services;
 using System;
@@ -33,5 +34,16 @@ namespace Roulette.Tests.Services
             result.Should().Be(expectedGameId);
         }
 
+        [Fact]
+        public async Task CloseBets_ClosesBetsOnGame()
+        {
+            var expectedGameId = Guid.NewGuid();
+            var mockRepository = Substitute.For<IGameRepository>();
+            var service = new RouletteService(mockRepository);
+
+            await service.CloseBets(new CloseBetsRequest { GameId = expectedGameId });
+
+            await mockRepository.Received().CloseBets(expectedGameId);
+        }
     }
 }

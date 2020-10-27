@@ -6,7 +6,7 @@ namespace Roulette.Models
     {
         public Guid GameId { get; set; }
         public bool IsOpen { get; set; } = true;
-        public DateTime OpenedAt { get; set; }
-        public DateTime ClosedAt { get; set; }
+        public DateTime? OpenedAt { get; set; }
+        public DateTime? ClosedAt { get; set; }
     }
 }

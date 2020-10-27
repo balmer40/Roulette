@@ -1,9 +1,7 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Roulette.Controllers;
+using Roulette.Models.Requests;
 using Roulette.Services;
 using System;
 using System.Threading.Tasks;
@@ -35,6 +33,17 @@ namespace Roulette.Tests.Controllers
             var result = await controller.NewGame() as OkNegotiatedContentResult<Guid>;
 
             result.Content.Should().Be(expectedGameId);
+        }
+
+        [Fact]
+        public async Task CloseBets_ClosesBets()
+        {
+            var expectedRequest = new CloseBetsRequest();
+            var mockService = Substitute.For<IRouletteService>();
+            var controller = new RouletteController(mockService);
+
+            await controller.CloseBets(expectedRequest);
+            await mockService.Received().CloseBets(expectedRequest);
         }
     }
 }
