@@ -1,8 +1,10 @@
-﻿namespace Roulette.Exceptions
+﻿using System;
+
+namespace Roulette.Exceptions
 {
     public class FailedToCreateBetException : FailedToModifyException
     {
-        public FailedToCreateBetException() : base("Failed to create bet")
+        public FailedToCreateBetException(Guid id) : base($"Failed to create bet for game with id {id}")
         {
 
         }

@@ -26,7 +26,7 @@ namespace Roulette.Tests.Controllers
         }
 
         [Fact]
-        public async Task NewGame_ReturnsGameId()
+        public async Task NewGame_ReturnsGameResponse()
         {
             var expectedNewGameResponse = new NewGameResponse();
             var mockService = Substitute.For<IRouletteService>();
@@ -39,17 +39,17 @@ namespace Roulette.Tests.Controllers
 
         #endregion
 
-        #region CloseBets
+        #region CloseBetting
 
         [Fact]
-        public async Task CloseBets_ClosesBets()
+        public async Task CloseBetting_ClosesBetting()
         {
             var expectedGameId = Guid.NewGuid();
             var mockService = Substitute.For<IRouletteService>();
             var controller = new RouletteController(mockService);
 
-            await controller.CloseBets(expectedGameId);
-            await mockService.Received().CloseBets(expectedGameId);
+            await controller.CloseBetting(expectedGameId);
+            await mockService.Received().CloseBetting(expectedGameId);
         }
 
         #endregion
@@ -67,6 +67,18 @@ namespace Roulette.Tests.Controllers
             await mockService.Received().AddBet(expectedRequest);
         }
 
+        [Fact]
+        public async Task AddBet_ReturnsBetResponse()
+        {
+            var expectedBetResponse = new AddBetResponse();
+            var mockService = Substitute.For<IRouletteService>();
+            mockService.AddBet(Arg.Any<AddBetRequest>()).Returns(expectedBetResponse);
+            var controller = new RouletteController(mockService);
+
+            var result = await controller.AddBet(new AddBetRequest()) as OkNegotiatedContentResult<NewGameResponse>;
+            result.Content.Should().Be(expectedBetResponse);
+        }
+
         #endregion
 
         #region DeleteBet
@@ -74,12 +86,39 @@ namespace Roulette.Tests.Controllers
         [Fact]
         public async Task DeleteBet_DeletesBet()
         {
-            var expectedBetId = Guid.NewGuid();
+            var expectedDeleteBetRequest = new DeleteBetRequest();
             var mockService = Substitute.For<IRouletteService>();
             var controller = new RouletteController(mockService);
 
-            await controller.DeleteBet(expectedBetId);
-            await mockService.Received().DeleteBet(expectedBetId);
+            await controller.DeleteBet(expectedDeleteBetRequest);
+            await mockService.Received().DeleteBet(expectedDeleteBetRequest);
+        }
+
+        #endregion
+
+        #region PlayGame
+
+        [Fact]
+        public async Task PlayGame_PlaysGame()
+        {
+            var expectedGameId = Guid.NewGuid();
+            var mockService = Substitute.For<IRouletteService>();
+            var controller = new RouletteController(mockService);
+
+            await controller.PlayGame(expectedGameId);
+            await mockService.Received().PlayGame(expectedGameId);
+        }
+
+        [Fact]
+        public async Task PlayGame_ReturnsPlayResponse()
+        {
+            var expectedPlayResponse = new PlayGameResponse();
+            var mockService = Substitute.For<IRouletteService>();
+            mockService.PlayGame(Arg.Any<Guid>()).Returns(expectedPlayResponse);
+            var controller = new RouletteController(mockService);
+
+            var result = await controller.PlayGame(Guid.NewGuid()) as OkNegotiatedContentResult<NewGameResponse>;
+            result.Content.Should().Be(expectedPlayResponse);
         }
 
         #endregion

@@ -9,11 +9,11 @@ namespace Roulette.Services
     {
         Task<NewGameResponse> CreateNewGame();
 
-        Task CloseBets(Guid gameId);
+        Task CloseBetting(Guid gameId);
 
         Task<AddBetResponse> AddBet(AddBetRequest request);
 
-        Task DeleteBet(Guid betId);
+        Task DeleteBet(DeleteBetRequest request);
 
         Task<PlayGameResponse> PlayGame(Guid gameId);
     }

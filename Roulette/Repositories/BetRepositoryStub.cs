@@ -2,6 +2,7 @@
 using Roulette.Models;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Roulette.Repositories
@@ -10,9 +11,9 @@ namespace Roulette.Repositories
     // so I have made the methods return a Task
 
     //TODO locks
-    public class BetRepository : IBetRepository
+    public class BetRepositoryStub : IBetRepository
     {
-        private static readonly ConcurrentDictionary<Guid, Bet> _bets = new ConcurrentDictionary<Guid, Bet>();
+        private static readonly ConcurrentDictionary<Guid, Bet> Bets = new ConcurrentDictionary<Guid, Bet>();
 
         public Task<Guid> CreateBet(Guid gameId, Guid customerId, BetType betType, int position, double amount)
         {
@@ -27,9 +28,9 @@ namespace Roulette.Repositories
                 Amount = amount
             };
 
-            if(!_bets.TryAdd(betId, bet))
+            if (!Bets.TryAdd(betId, bet))
             {
-                throw new FailedToCreateBetException();
+                throw new FailedToCreateBetException(gameId);
             }
 
             return Task.FromResult(betId);
@@ -37,32 +38,26 @@ namespace Roulette.Repositories
 
         public Task DeleteBet(Guid id)
         {
-            if(!_bets.ContainsKey(id))
+            if (!Bets.ContainsKey(id))
             {
                 throw new BetNotFoundException(id);
             }
-            
-            if(!_bets.TryRemove(id, out var _)) {
+
+            if (!Bets.TryRemove(id, out _))
+            {
                 throw new FailedToDeleteBetException(id);
             }
 
             return Task.CompletedTask;
         }
 
-        //TODO remove
-        public Task<Bet> GetById(Guid id)
+        public Task<Bet[]> GetAllBetsForGame(Guid gameId)
         {
-            if (!_bets.TryGetValue(id, out var bet))
-            {
-                throw new BetNotFoundException(id);
-            }
+            var bets = Bets
+                .Where(bet => bet.Value.GameId == gameId)
+                .Select(bet => bet.Value);
 
-            return Task.FromResult(bet);
-        }
-
-        public Task<Bet[]> GetAll(Guid gameId)
-        {
-            throw new NotImplementedException();
+            return Task.FromResult(bets.ToArray());
         }
     }
 }

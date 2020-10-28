@@ -17,8 +17,9 @@ namespace Roulette
 
         public static void AddServiceDependencies(this IServiceCollection services)
         {
-            services.TryAddSingleton<IGameRepository, GameRepository>();
-            services.TryAddSingleton<IBetRepository, BetRepository>();
+            services.TryAddScoped<IGameService, GameService>();
+            services.TryAddSingleton<IGameRepository, GameRepositoryStub>();
+            services.TryAddSingleton<IBetRepository, BetRepositoryStub>();
         }
 
         public static void AddSharedDependencies(this IServiceCollection services)

@@ -6,7 +6,7 @@ namespace Roulette.Handlers
 {
     public abstract class BetHandler : IBetHandler
     {
-        public BetType BetType { get; }
+        public BetType BetType { get; set; }
         public IBetTypeValidator BetTypeValidator { get; }
 
         public BetHandler(BetType betType, IBetTypeValidator betTypeValidator)
@@ -15,13 +15,10 @@ namespace Roulette.Handlers
             BetTypeValidator = betTypeValidator;
         }
 
-        public ValidationResult ValidateBetTypeAndPosition(BetType betType, int position)
-        {
-            return BetTypeValidator.ValidateBetTypeAndPosition(betType, position);
-        }
+        public ValidationResult ValidatePosition(int position) => BetTypeValidator.ValidatePosition(position);
 
-        public abstract bool IsWinningBet();
-        public abstract string CalculateWinnings();
+        public abstract bool IsWinningBet(int position, int winningNumber);
+        public abstract WinningBet CalculateWinnings(Bet bet);
 
     }
 }

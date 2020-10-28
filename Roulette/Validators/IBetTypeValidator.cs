@@ -5,6 +5,6 @@ namespace Roulette.Validators
 {
     public interface IBetTypeValidator
     {
-        ValidationResult ValidateBetTypeAndPosition(BetType betType, int position);
+        ValidationResult ValidatePosition(int position);
     }
 }

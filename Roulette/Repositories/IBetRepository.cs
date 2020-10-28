@@ -10,6 +10,6 @@ namespace Roulette.Repositories
 
         Task DeleteBet(Guid id);
 
-        Task<Bet> GetById(Guid id);
+        Task<Bet[]> GetAllBetsForGame(Guid gameId);
     }
 }

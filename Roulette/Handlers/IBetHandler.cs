@@ -1,4 +1,6 @@
-﻿using Roulette.Models;
+﻿using System;
+using System.Collections.Generic;
+using Roulette.Models;
 using Roulette.Validators;
 using System.ComponentModel.DataAnnotations;
 
@@ -10,10 +12,10 @@ namespace Roulette.Handlers
 
         IBetTypeValidator BetTypeValidator { get; }
 
-        ValidationResult ValidateBetTypeAndPosition(BetType betType, int position);
+        ValidationResult ValidatePosition(int position);
 
-        bool IsWinningBet();
+        bool IsWinningBet(int position, int winningNumber);
 
-        string CalculateWinnings();
+        WinningBet CalculateWinnings(Bet bet);
     }
 }

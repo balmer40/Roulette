@@ -10,9 +10,9 @@ namespace Roulette.Repositories
     // so I have made the methods return a Task
 
     //TODO locks
-    public class GameRepository : IGameRepository
+    public class GameRepositoryStub : IGameRepository
     {
-        private static readonly ConcurrentDictionary<Guid, Game> _games = new ConcurrentDictionary<Guid, Game>();
+        private static readonly ConcurrentDictionary<Guid, Game> Games = new ConcurrentDictionary<Guid, Game>();
 
         public Task<Guid> CreateGame()
         {
@@ -23,7 +23,7 @@ namespace Roulette.Repositories
                 OpenedAt = DateTime.Now
             };
 
-            if(!_games.TryAdd(gameId, game))
+            if(!Games.TryAdd(gameId, game))
             {
                 throw new FailedToCreateGameException();
             }
@@ -31,18 +31,36 @@ namespace Roulette.Repositories
             return Task.FromResult(gameId) ;
         }
 
-        public async Task CloseBets(Guid id)
+        public async Task CloseBetting(Guid id)
+        {
+            var game = await GetById(id);
+            var newGame = new Game
+            {
+                Id = game.Id,
+                IsBettingOpen = false,
+                OpenedAt = game.OpenedAt,
+                ClosedAt = game.ClosedAt
+            };
+
+            if(!Games.TryUpdate(id, newGame, game))
+            {
+                throw new FailedToUpdateGameException(id);
+            }
+        }
+
+        public async Task CloseGame(Guid id)
         {
             var game = await GetById(id);
             var newGame = new Game
             {
                 Id = game.Id,
                 IsOpen = false,
+                IsBettingOpen = false,
                 OpenedAt = game.OpenedAt,
                 ClosedAt = DateTime.Now
             };
 
-            if(!_games.TryUpdate(id, newGame, game))
+            if (!Games.TryUpdate(id, newGame, game))
             {
                 throw new FailedToUpdateGameException(id);
             }
@@ -50,7 +68,7 @@ namespace Roulette.Repositories
 
         public Task<Game> GetById(Guid id)
         {
-            if (!_games.TryGetValue(id, out var game))
+            if (!Games.TryGetValue(id, out var game))
             {
                 throw new GameNotFoundException(id);
             }

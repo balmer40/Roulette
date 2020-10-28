@@ -26,7 +26,7 @@ namespace Roulette.Models.Requests
         {
             var betHandlerProvider = validationContext.GetService(typeof(IBetHandlerProvider)) as IBetHandlerProvider;
             var betHandler = betHandlerProvider.GetBetHandler(BetType);
-            var result = betHandler.ValidateBetTypeAndPosition(BetType, Position);
+            var result = betHandler.ValidatePosition(Position);
 
             return new[] { result };
         }

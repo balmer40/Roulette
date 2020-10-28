@@ -8,7 +8,9 @@ namespace Roulette.Repositories
     {
         Task<Guid> CreateGame();
 
-        Task CloseBets(Guid gameId);
+        Task CloseBetting(Guid id);
+
+        Task CloseGame(Guid id);
 
         Task<Game> GetById(Guid id);
     }

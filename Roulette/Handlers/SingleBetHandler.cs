@@ -1,6 +1,5 @@
 ﻿using Roulette.Models;
 using Roulette.Validators;
-using System;
 
 namespace Roulette.Handlers
 {
@@ -10,14 +9,23 @@ namespace Roulette.Handlers
         {
         }
 
-        public override bool IsWinningBet()
+        public override bool IsWinningBet(int position, int winningNumber)
         {
-            throw new NotImplementedException();
+            return position == winningNumber;
         }
 
-        public override string CalculateWinnings()
+        public override WinningBet CalculateWinnings(Bet bet)
         {
-            throw new NotImplementedException();
+            var amountWon = bet.Amount * 36;
+
+            return new WinningBet
+            {
+                Id = bet.Id,
+                BetType = bet.BetType,
+                Position = bet.Position,
+                AmountBet = bet.Amount,
+                AmountWon = amountWon
+            };
         }
     }
 }
