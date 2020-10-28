@@ -41,16 +41,17 @@ namespace Roulette.Services
         public async Task CloseBetting(Guid gameId)
         {
             var game = await _gameRepository.GetById(gameId);
-            ValidateGameIsOpen(game);
+            if (game.GameStatus == GameStatus.GameClosed)
+            {
+                throw new GameClosedException(game.Id);
+            }
 
             await _gameRepository.CloseBetting(gameId);
         }
 
         public async Task<AddBetResponse> AddBet(AddBetRequest request)
         {
-            var game = await _gameRepository.GetById(request.GameId);
-            ValidateGameIsOpen(game);
-            ValidateGameBettingIsOpen(game);
+            await ValidateGameBettingIsOpen(request.GameId);
 
             var betId = await _betRepository.CreateBet(
                 request.GameId,
@@ -64,9 +65,7 @@ namespace Roulette.Services
 
         public async Task DeleteBet(DeleteBetRequest request)
         {
-            var game = await _gameRepository.GetById(request.GameId);
-            ValidateGameIsOpen(game);
-            ValidateGameBettingIsOpen(game);
+            await ValidateGameBettingIsOpen(request.GameId);
 
             await _betRepository.DeleteBet(request.BetId);
         }
@@ -74,10 +73,9 @@ namespace Roulette.Services
         public async Task<PlayGameResponse> PlayGame(Guid gameId)
         {
             var game = await _gameRepository.GetById(gameId);
-            ValidateGameIsOpen(game);
-            if (game.IsBettingOpen)
+            if (game.GameStatus == GameStatus.GameOpen)
             {
-                throw new GameBetsOpenException(gameId);
+                throw new GameBettingOpenException(gameId);
             }
 
             var winningNumber = _gameService.GetWinningNumber();
@@ -174,19 +172,12 @@ namespace Roulette.Services
             }
         }
 
-        private void ValidateGameIsOpen(Game game)
+        private async Task ValidateGameBettingIsOpen(Guid gameId)
         {
-            if(!game.IsOpen)
+            var game = await _gameRepository.GetById(gameId);
+            if (game.GameStatus == GameStatus.BettingClosed)
             {
-                throw new GameClosedException(game.Id); 
-            }
-        }
-
-        private void ValidateGameBettingIsOpen(Game game)
-        {
-            if (!game.IsBettingOpen)
-            {
-                throw new GameBetsClosedException(game.Id);
+                throw new GameBettingClosedException(game.Id);
             }
         }
     }

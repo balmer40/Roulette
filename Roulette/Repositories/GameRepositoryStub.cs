@@ -37,7 +37,7 @@ namespace Roulette.Repositories
             var newGame = new Game
             {
                 Id = game.Id,
-                IsBettingOpen = false,
+                GameStatus = GameStatus.BettingClosed,
                 OpenedAt = game.OpenedAt,
                 ClosedAt = game.ClosedAt
             };
@@ -54,8 +54,7 @@ namespace Roulette.Repositories
             var newGame = new Game
             {
                 Id = game.Id,
-                IsOpen = false,
-                IsBettingOpen = false,
+                GameStatus = GameStatus.GameClosed,
                 OpenedAt = game.OpenedAt,
                 ClosedAt = DateTime.Now
             };

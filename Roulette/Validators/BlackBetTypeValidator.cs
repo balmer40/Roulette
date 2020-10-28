@@ -1,13 +1,12 @@
-﻿using Roulette.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Roulette.Validators
 {
-    public class SingleBetTypeValidator : IBetTypeValidator
+    public class BlackBetTypeValidator : IBetTypeValidator
     {
         public ValidationResult ValidatePosition(int position = 0)
         {
-            // single bet can be any position
+            //position not needed for black bets
             return ValidationResult.Success;
         }
     }

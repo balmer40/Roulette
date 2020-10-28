@@ -14,7 +14,7 @@ namespace Roulette.Handlers
 
         ValidationResult ValidatePosition(int position);
 
-        bool IsWinningBet(int position, int winningNumber);
+        bool IsWinningBet(int winningNumber, int position = 0);
 
         WinningBet CalculateWinnings(Bet bet);
     }

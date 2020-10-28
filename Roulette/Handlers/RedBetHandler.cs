@@ -1,22 +1,23 @@
 ﻿using Roulette.Models;
 using Roulette.Validators;
+using System.Linq;
 
 namespace Roulette.Handlers
 {
-    public class SingleBetHandler : BetHandler
+    public class RedBetHandler : BetHandler
     {
-        public SingleBetHandler(IBetTypeValidator betTypeValidator) : base(BetType.Single, betTypeValidator)
+        public RedBetHandler(IBetTypeValidator betTypeValidator) : base(BetType.Red, betTypeValidator)
         {
         }
 
         public override bool IsWinningBet(int winningNumber, int position = 0)
         {
-            return winningNumber == position;
+            return Numbers.RedNumbers.Contains(winningNumber);
         }
 
         public override WinningBet CalculateWinnings(Bet bet)
         {
-            var amountWon = bet.Amount * BetMultipliers.SingleMultiplier;
+            var amountWon = bet.Amount * BetMultipliers.BlackAndRedMultiplier;
 
             return CreateWinningBet(bet, amountWon);
         }

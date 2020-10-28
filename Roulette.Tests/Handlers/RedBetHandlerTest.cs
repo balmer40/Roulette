@@ -8,13 +8,13 @@ using Xunit;
 
 namespace Roulette.Tests.Handlers
 {
-    public class SingleBetHandlerTest
+    public class RedBetHandlerTest
     {
         [Fact]
         public void ValidatePosition_ValidatesPosition()
         {
             var mockBetTypeValidator = Substitute.For<IBetTypeValidator>();
-            var betHandler = new SingleBetHandler(mockBetTypeValidator);
+            var betHandler = new RedBetHandler(mockBetTypeValidator);
 
             betHandler.ValidatePosition();
 
@@ -27,9 +27,9 @@ namespace Roulette.Tests.Handlers
             var expectedValidationResult = ValidationResult.Success;
             var mockBetTypeValidator = Substitute.For<IBetTypeValidator>();
             mockBetTypeValidator.ValidatePosition(Arg.Any<int>()).Returns(expectedValidationResult);
-            var betHandler = new SingleBetHandler(mockBetTypeValidator);
+            var betHandler = new RedBetHandler(mockBetTypeValidator);
 
-            var result = betHandler.ValidatePosition(1);
+            var result = betHandler.ValidatePosition();
 
             result.Should().Be(expectedValidationResult);
         }
@@ -37,9 +37,9 @@ namespace Roulette.Tests.Handlers
         [Fact]
         public void IsWinningBet_ReturnsTrueWhenWon()
         {
-            var betHandler = new SingleBetHandler(Substitute.For<IBetTypeValidator>());
+            var betHandler = new RedBetHandler(Substitute.For<IBetTypeValidator>());
 
-            var result = betHandler.IsWinningBet(1, 1);
+            var result = betHandler.IsWinningBet(3);
 
             result.Should().BeTrue();
         }
@@ -47,9 +47,9 @@ namespace Roulette.Tests.Handlers
         [Fact]
         public void IsWinningBet_ReturnsFalseWhenLost()
         {
-            var betHandler = new SingleBetHandler(Substitute.For<IBetTypeValidator>());
+            var betHandler = new RedBetHandler(Substitute.For<IBetTypeValidator>());
 
-            var result = betHandler.IsWinningBet(1, 2);
+            var result = betHandler.IsWinningBet(2);
 
             result.Should().BeFalse();
         }
@@ -58,11 +58,11 @@ namespace Roulette.Tests.Handlers
         public void CalculatesWinnings_ReturnsExpectedWinnings()
         {
             var amount = 1;
-            var betHandler = new SingleBetHandler(Substitute.For<IBetTypeValidator>());
+            var betHandler = new RedBetHandler(Substitute.For<IBetTypeValidator>());
 
             var result = betHandler.CalculateWinnings(new Bet { Amount = amount });
 
-            result.Should().Be(amount * BetMultipliers.SingleMultiplier);
+            result.Should().Be(amount * BetMultipliers.BlackAndRedMultiplier);
         }
     }
 }

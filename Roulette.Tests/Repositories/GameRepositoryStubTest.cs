@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Roulette.Exceptions;
+using Roulette.Models;
 using Roulette.Repositories;
 using System;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Roulette.Tests.Repositories
             var result = await repository.GetById(expectedGameId);
 
             result.Id.Should().Be(expectedGameId);
-            result.IsBettingOpen.Should().Be(true);
+            result.GameStatus.Should().Be(GameStatus.GameOpen);
             result.OpenedAt.Should().NotBe(default);
             result.ClosedAt.Should().Be(null);
         }
@@ -51,8 +52,7 @@ namespace Roulette.Tests.Repositories
             var result = await repository.GetById(expectedGameId);
 
             result.Id.Should().Be(expectedGameId);
-            result.IsOpen.Should().Be(true);
-            result.IsBettingOpen.Should().Be(false);
+            result.GameStatus.Should().Be(GameStatus.BettingClosed);
             result.OpenedAt.Should().NotBe(default);
             result.ClosedAt.Should().Be(default);
         }
@@ -80,8 +80,7 @@ namespace Roulette.Tests.Repositories
             var result = await repository.GetById(expectedGameId);
 
             result.Id.Should().Be(expectedGameId);
-            result.IsOpen.Should().Be(false);
-            result.IsBettingOpen.Should().Be(false);
+            result.GameStatus.Should().Be(GameStatus.GameClosed);
             result.OpenedAt.Should().NotBe(default);
             result.ClosedAt.Should().NotBe(default);
         }
