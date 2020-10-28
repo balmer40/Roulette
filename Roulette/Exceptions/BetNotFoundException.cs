@@ -1,8 +1,10 @@
-﻿namespace Roulette.Exceptions
+﻿using System;
+
+namespace Roulette.Exceptions
 {
     public class BetNotFoundException : NotFoundException
     {
-        public BetNotFoundException(string message) : base(message)
+        public BetNotFoundException(Guid id) : base($"Bet not found with id: {id}")
         {
 
         }

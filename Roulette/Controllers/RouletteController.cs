@@ -2,6 +2,7 @@
 using Roulette.Models.Requests;
 using Roulette.Models.Responses;
 using Roulette.Services;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -29,15 +30,14 @@ namespace Roulette.Controllers
         [HttpPost("new-game")]
         public async Task<IActionResult> NewGame()
         {
-            var gameId = await _rouletteService.CreateNewGame();
-
-            return Ok(new NewGameResponse { GameId = gameId });
+            var response = await _rouletteService.CreateNewGame();
+            return Ok(response);
         }
 
         /// <summary>
         /// Closes bets for a particular game
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="gameId"></param>
         /// <returns>OK</returns>
         /// <response code="200">OK</response>
         /// <response code="400">Bad request</response>
@@ -47,11 +47,10 @@ namespace Roulette.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [HttpPost("close-bets")]
-        public async Task<IActionResult> CloseBets(CloseBetsRequest request)
+        [HttpPost("close-bets/{gameId}")]
+        public async Task<IActionResult> CloseBets(Guid gameId)
         {
-            await _rouletteService.CloseBets(request);
-
+            await _rouletteService.CloseBets(gameId);
             return Ok();
         }
 
@@ -71,13 +70,14 @@ namespace Roulette.Controllers
         [HttpPost("add-bet")]
         public async Task<IActionResult> AddBet(AddBetRequest request)
         {
-            return Ok();
+            var response = await _rouletteService.AddBet(request);
+            return Ok(response);
         }
 
         /// <summary>
-        /// Removes a bet for a particular game and customer
+        /// Removes a bet
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="betId"></param>
         /// <returns>OK</returns>
         /// <response code="200">OK</response>
         /// <response code="400">Bad request</response>
@@ -87,16 +87,17 @@ namespace Roulette.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [HttpPost("remove-bet")]
-        public async Task<IActionResult> RemoveBet(RemoveBetRequest request)
+        [HttpDelete("delete-bet/{betId}")]
+        public async Task<IActionResult> DeleteBet(Guid betId)
         {
+            await _rouletteService.DeleteBet(betId);
             return Ok();
         }
 
         /// <summary>
         /// Plays a game
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="gameId"></param>
         /// <returns>OK with PlayGameResponse</returns>
         /// <response code="200">OK</response>
         /// <response code="400">Bad request</response>
@@ -106,8 +107,8 @@ namespace Roulette.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [HttpPost("play-game")]
-        public async Task<IActionResult> PlayGame(PlayGameRequest request)
+        [HttpPost("play-game/{gameId}")]
+        public async Task<IActionResult> PlayGame(Guid gameId)
         {
             return Ok();
         }

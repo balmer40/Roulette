@@ -7,14 +7,14 @@ namespace Roulette.Services
 {
     public interface IRouletteService
     {
-        Task<Guid> CreateNewGame();
+        Task<NewGameResponse> CreateNewGame();
 
-        Task CloseBets(CloseBetsRequest request);
+        Task CloseBets(Guid gameId);
 
         Task<AddBetResponse> AddBet(AddBetRequest request);
 
-        Task RemoveBet(RemoveBetRequest request);
+        Task DeleteBet(Guid betId);
 
-        Task<PlayGameResponse> PlayGame(PlayGameRequest request);
+        Task<PlayGameResponse> PlayGame(Guid gameId);
     }
 }

@@ -21,6 +21,7 @@ namespace Roulette
             services.AddControllers();
             services.AddControllerDependencies();
             services.AddServiceDependencies();
+            services.AddSharedDependencies();
 
             services.AddSwaggerGen(); //TODO need this?
 

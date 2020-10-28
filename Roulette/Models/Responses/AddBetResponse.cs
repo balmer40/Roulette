@@ -4,6 +4,6 @@ namespace Roulette.Models.Responses
 {
     public class AddBetResponse
     {
-        Guid BetId { get; set; }
+        public Guid BetId { get; set; }
     }
 }

@@ -8,23 +8,27 @@ namespace Roulette.Repositories
 {
     // although the methods in this class don't do anything asynchronous, in reality they would with database calls,
     // so I have made the methods return a Task
+
+    //TODO locks
     public class GameRepository : IGameRepository
     {
-        private readonly ConcurrentDictionary<Guid, Game> _games = new ConcurrentDictionary<Guid, Game>();
+        private static readonly ConcurrentDictionary<Guid, Game> _games = new ConcurrentDictionary<Guid, Game>();
 
-        public Task<Guid> CreateNewGame()
+        public Task<Guid> CreateGame()
         {
             var gameId = Guid.NewGuid();
             var game = new Game
             {
-                GameId = gameId,
+                Id = gameId,
                 OpenedAt = DateTime.Now
             };
 
-            //TODO exception if fails?
-            _games.TryAdd(gameId, game);
+            if(!_games.TryAdd(gameId, game))
+            {
+                throw new FailedToCreateGameException();
+            }
 
-            return Task.FromResult(game.GameId);
+            return Task.FromResult(gameId) ;
         }
 
         public async Task CloseBets(Guid id)
@@ -32,25 +36,26 @@ namespace Roulette.Repositories
             var game = await GetById(id);
             var newGame = new Game
             {
-                GameId = game.GameId,
+                Id = game.Id,
                 IsOpen = false,
                 OpenedAt = game.OpenedAt,
                 ClosedAt = DateTime.Now
             };
 
-            //TODO exception if fails?
-            _games.TryUpdate(id, newGame, game);
+            if(!_games.TryUpdate(id, newGame, game))
+            {
+                throw new FailedToUpdateGameException(id);
+            }
         }
 
-        public async Task<Game> GetById(Guid id)
+        public Task<Game> GetById(Guid id)
         {
             if (!_games.TryGetValue(id, out var game))
             {
-                //TODO log
                 throw new GameNotFoundException(id);
             }
 
-            return game;
+            return Task.FromResult(game);
         }
     }
 }

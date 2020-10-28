@@ -8,24 +8,23 @@ namespace Roulette.Models.Requests
     public class AddBetRequest: IValidatableObject
     {
         [Required]
-        public Guid GameId { get; }
+        public Guid GameId { get; set; }
 
         [Required]
-        public Guid CustomerId { get; }
+        public Guid CustomerId { get; set; }
 
         [Required]
-        public BetType BetType { get; }
+        public BetType BetType { get; set; }
 
         [Range(0, 36)]
-        public int Position { get; }
+        public int Position { get; set; }
 
-        [Range(0, 10000)] //only allow maximum of 10k bet
-        public double Amount { get; }
+        [Range(1, 10000)] //only allow maximum of 10k bet
+        public double Amount { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var betHandlerProvider = validationContext.GetService(typeof(IBetHandlerProvider)) as IBetHandlerProvider;
-            // TODO check if null?
             var betHandler = betHandlerProvider.GetBetHandler(BetType);
             var result = betHandler.ValidateBetTypeAndPosition(BetType, Position);
 

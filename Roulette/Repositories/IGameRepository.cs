@@ -6,8 +6,10 @@ namespace Roulette.Repositories
 {
     public interface IGameRepository
     {
-        Task<Guid> CreateNewGame();
+        Task<Guid> CreateGame();
 
         Task CloseBets(Guid gameId);
+
+        Task<Game> GetById(Guid id);
     }
 }

@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Roulette.Handlers;
+using Roulette.Providers;
 using Roulette.Repositories;
 using Roulette.Services;
+using Roulette.Validators;
 
 namespace Roulette
 {
@@ -14,7 +17,19 @@ namespace Roulette
 
         public static void AddServiceDependencies(this IServiceCollection services)
         {
-            services.TryAddScoped<IGameRepository, GameRepository>();
+            services.TryAddSingleton<IGameRepository, GameRepository>();
+            services.TryAddSingleton<IBetRepository, BetRepository>();
+        }
+
+        public static void AddSharedDependencies(this IServiceCollection services)
+        {
+            services.TryAddScoped<IBetTypeValidator, SingleBetTypeValidator>();
+            services.TryAddScoped<IBetHandler, SingleBetHandler>();
+            services.TryAddScoped(provider => new[]
+            {
+                provider.GetService<IBetHandler>()
+            });
+            services.TryAddScoped<IBetHandlerProvider, BetHandlerProvider>();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Roulette.Models;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Roulette.Validators
@@ -8,7 +7,7 @@ namespace Roulette.Validators
     {
         public ValidationResult ValidateBetTypeAndPosition(BetType betType, int position)
         {
-            throw new NotImplementedException();
+            return ValidationResult.Success;
         }
     }
 }
