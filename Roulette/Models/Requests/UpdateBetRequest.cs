@@ -6,7 +6,7 @@ namespace Roulette.Models.Requests
     public class UpdateBetRequest
     {
         [Required]
-        [Range(1, 10000)] //only allow maximum of 10k bet
+        [Range(Ranges.MinimumBet, Ranges.MaximumBet - 1)] //can only update to max 10k, and the minimum bet already can be 1
         public double Amount { get; set; }
     }
 }

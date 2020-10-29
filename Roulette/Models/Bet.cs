@@ -2,13 +2,12 @@
 
 namespace Roulette.Models
 {
-    public class Bet
+    public class Bet : BaseBet
     {
-        public Guid Id { get; set; }
         public Guid GameId { get; set; }
+
         public Guid CustomerId { get; set; }
-        public BetType BetType { get; set; }
-        public int Position { get; set; }
+
         public double Amount { get; set; }
     }
 }

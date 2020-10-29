@@ -8,6 +8,7 @@ namespace Roulette.Models.Responses
         public Guid GameId { get; set; }
         public int WinningNumber { get; set; }
         public Dictionary<string, WinningBet[]> WinningBets { get; set; }
+        public Dictionary<string, LosingBet[]> LosingBets { get; set; }
         public Dictionary<string, double> CustomerTotalWinnings { get; set; }
     }
 }

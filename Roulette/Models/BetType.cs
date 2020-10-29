@@ -10,17 +10,17 @@ namespace Roulette.Models
         Single,
         SplitHorizontal,
         SplitVertical,
-        Street,
-        Corner,
-        SixLine,
-        Low,
-        High,
         Red,
         Black,
-        Even,
-        Odd,
-        Column,
-        Dozen,
-        Snake
+        Corner,
+        Column//,
+        //Street,
+        //SixLine,
+        //Low,
+        //High,       
+        //Even,
+        //Odd,    
+        //Dozen,
+        //Snake
     }
 }

@@ -41,6 +41,11 @@ namespace Roulette.Repositories
                 throw new BetNotFoundException(id);
             }
 
+            if(bet.Amount + amount > Ranges.MaximumBet)
+            {
+                throw new UpdateAmountTooHighException(id);
+            }
+
             var newBet = new Bet
             {
                 Id = bet.Id,
@@ -48,8 +53,7 @@ namespace Roulette.Repositories
                 CustomerId = bet.CustomerId,
                 BetType = bet.BetType,
                 Position = bet.Position,
-                Amount = amount
-
+                Amount = bet.Amount + amount
             };
 
             if (!Bets.TryUpdate(id, newBet, bet))

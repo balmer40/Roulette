@@ -78,16 +78,17 @@ namespace Roulette.Tests.Repositories
             var expectedCustomerId = Guid.NewGuid();
             var expectedBetType = BetType.Single;
             var expectedPosition = 1;
-            var expectedAmount = 50.0;
+            var firstAmount = 10.0;
+            var secondAmount = 50.0;
 
             var expectedBetId = await repository.CreateBet(
                 expectedGameId,
                 expectedCustomerId,
                 expectedBetType,
                 expectedPosition,
-                10.0);
+                firstAmount);
 
-            await repository.UpdateBet(expectedBetId, expectedAmount);
+            await repository.UpdateBet(expectedBetId, secondAmount);
 
             var bets = await repository.GetAllBetsForGame(expectedGameId);
 
@@ -97,7 +98,7 @@ namespace Roulette.Tests.Repositories
             bets[0].CustomerId.Should().Be(expectedCustomerId);
             bets[0].BetType.Should().Be(expectedBetType);
             bets[0].Position.Should().Be(expectedPosition);
-            bets[0].Amount.Should().Be(expectedAmount);
+            bets[0].Amount.Should().Be(firstAmount + secondAmount);
         }
 
         [Fact]
@@ -106,6 +107,21 @@ namespace Roulette.Tests.Repositories
             var repository = new BetRepositoryStub();
 
             await Assert.ThrowsAsync<BetNotFoundException>(() => repository.UpdateBet(Guid.NewGuid(), 1));
+        }
+
+        [Fact]
+        public async Task UpdateBet_ThrowsWhenAmountTooHigh()
+        {
+            var repository = new BetRepositoryStub();
+
+            var betId = await repository.CreateBet(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                BetType.Single,
+                1,
+                9999.0);
+
+            await Assert.ThrowsAsync<UpdateAmountTooHighException>(() => repository.UpdateBet(betId, 5));
         }
 
         #endregion
@@ -138,8 +154,6 @@ namespace Roulette.Tests.Repositories
 
             await Assert.ThrowsAsync<BetNotFoundException>(() => repository.DeleteBet(Guid.NewGuid()));
         }
-
-        //TODO can we test the modify exceptions?
 
         #endregion
     }

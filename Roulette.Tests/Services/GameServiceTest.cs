@@ -3,7 +3,6 @@ using NSubstitute;
 using Roulette.Exceptions;
 using Roulette.Handlers;
 using Roulette.Models;
-using Roulette.Models.Requests;
 using Roulette.Models.Responses;
 using Roulette.Providers;
 using Roulette.Repositories;
@@ -60,7 +59,7 @@ namespace Roulette.Tests.Services
         {
             var expectedGameId = Guid.NewGuid();
             var mockRepository = Substitute.For<IGameRepository>();
-            mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game ());
+            mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game());
 
             var service = new GameService(
                 mockRepository,
@@ -237,12 +236,13 @@ namespace Roulette.Tests.Services
         [Fact]
         public async Task PlayGame_CalculatesWinnings()
         {
+            var expectedBet = new Bet { BetType = BetType.Single };
             var mockGameRepository = Substitute.For<IGameRepository>();
             mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
             var mockGameService = Substitute.For<ISpinWheelService>();
             mockGameService.GetWinningNumber().Returns(1);
             var mockBetRepository = Substitute.For<IBetRepository>();
-            mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { new Bet { BetType = BetType.Single } });
+            mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { expectedBet });
             var mockBetHandler = Substitute.For<IBetHandler>();
             var mockBetHandlerProvider = Substitute.For<IBetHandlerProvider>();
             mockBetHandlerProvider.GetBetHandler(Arg.Any<BetType>()).Returns(mockBetHandler);
@@ -256,12 +256,38 @@ namespace Roulette.Tests.Services
 
             await service.PlayGame(Guid.NewGuid());
 
-            //TODO can call with bet?
-            mockBetHandler.Received().CalculateWinnings(Arg.Any<Bet>());
+            mockBetHandler.Received().CalculateWinnings(expectedBet);
         }
 
         [Fact]
-        public async Task PlayGame_ReturnsWinnings()
+        public async Task PlayGame_ClosesGame()
+        {
+            var expectedGameId = Guid.NewGuid();
+            var mockGameRepository = Substitute.For<IGameRepository>();
+            mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
+            var mockGameService = Substitute.For<ISpinWheelService>();
+            mockGameService.GetWinningNumber().Returns(1);
+            var mockBetRepository = Substitute.For<IBetRepository>();
+            mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { new Bet { BetType = BetType.Single }, new Bet { BetType = BetType.Single } });
+            var mockBetHandler = Substitute.For<IBetHandler>();
+            var mockBetHandlerProvider = Substitute.For<IBetHandlerProvider>();
+            mockBetHandlerProvider.GetBetHandler(Arg.Any<BetType>()).Returns(mockBetHandler);
+            mockBetHandler.IsWinningBet(Arg.Any<int>(), Arg.Any<int>()).Returns(true);
+            mockBetHandler.CalculateWinnings(Arg.Any<Bet>()).Returns(new WinningBet());
+
+            var service = new GameService(
+                mockGameRepository,
+                mockBetRepository,
+                mockGameService,
+                mockBetHandlerProvider);
+
+            await service.PlayGame(expectedGameId);
+
+            await mockGameRepository.Received().CloseGame(expectedGameId);
+        }
+
+        [Fact]
+        public async Task PlayGame_ReturnsExpectedWinnings()
         {
             var expectedGameId = Guid.NewGuid();
             var expectedCustomerId = Guid.NewGuid();
@@ -299,7 +325,7 @@ namespace Roulette.Tests.Services
             response.WinningBets.First().Key.Should().Be(expectedCustomerId.ToString());
             response.WinningBets.First().Value.Count().Should().Be(1);
             var winningBet = response.WinningBets.First().Value.First();
-            winningBet.Id.Should().Be(expectedCustomerId.ToString());
+            winningBet.Id.Should().Be(expectedBetId.ToString());
             winningBet.BetType.Should().Be(expectedBetType);
             winningBet.Position.Should().Be(expectedPosition);
             winningBet.AmountBet.Should().Be(expectedAmountBet);
@@ -348,20 +374,25 @@ namespace Roulette.Tests.Services
         }
 
         [Fact]
-        public async Task PlayGame_ClosesGame()
+        public async Task PlayGame_ReturnsExpectedLosses()
         {
             var expectedGameId = Guid.NewGuid();
+            var expectedCustomerId = Guid.NewGuid();
+            var expectedBetId = Guid.NewGuid();
+            var expectedBetType = BetType.Single;
+            var expectedPosition = 2;
+            var expectedAmountBet = 50.0;
+            var expectedWinningNumber = 1;
             var mockGameRepository = Substitute.For<IGameRepository>();
             mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
             var mockGameService = Substitute.For<ISpinWheelService>();
-            mockGameService.GetWinningNumber().Returns(1);
+            mockGameService.GetWinningNumber().Returns(expectedWinningNumber);
             var mockBetRepository = Substitute.For<IBetRepository>();
-            mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { new Bet { BetType = BetType.Single }, new Bet { BetType = BetType.Single } });
+            mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { new Bet { BetType = BetType.Single } });
             var mockBetHandler = Substitute.For<IBetHandler>();
             var mockBetHandlerProvider = Substitute.For<IBetHandlerProvider>();
             mockBetHandlerProvider.GetBetHandler(Arg.Any<BetType>()).Returns(mockBetHandler);
-            mockBetHandler.IsWinningBet(Arg.Any<int>(), Arg.Any<int>()).Returns(true);
-            mockBetHandler.CalculateWinnings(Arg.Any<Bet>()).Returns(new WinningBet());
+            mockBetHandler.IsWinningBet(Arg.Any<int>(), Arg.Any<int>()).Returns(false);
 
             var service = new GameService(
                 mockGameRepository,
@@ -369,9 +400,19 @@ namespace Roulette.Tests.Services
                 mockGameService,
                 mockBetHandlerProvider);
 
-            await service.PlayGame(expectedGameId);
+            var response = await service.PlayGame(expectedGameId);
 
-            await mockGameRepository.Received().CloseGame(expectedGameId);
+            response.GameId.Should().Be(expectedGameId);
+            response.WinningNumber.Should().Be(expectedWinningNumber);
+
+            response.LosingBets.Count.Should().Be(1);
+            response.LosingBets.First().Key.Should().Be(expectedCustomerId.ToString());
+            response.LosingBets.First().Value.Count().Should().Be(1);
+            var losingBet = response.LosingBets.First().Value.First();
+            losingBet.Id.Should().Be(expectedBetId.ToString());
+            losingBet.BetType.Should().Be(expectedBetType);
+            losingBet.Position.Should().Be(expectedPosition);
+            losingBet.AmountBet.Should().Be(expectedAmountBet);
         }
 
         #endregion

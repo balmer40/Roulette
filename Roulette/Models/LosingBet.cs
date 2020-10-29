@@ -1,9 +1,7 @@
 ﻿namespace Roulette.Models
 {
-    public class WinningBet : BaseBet
+    public class LosingBet : BaseBet
     {
         public double AmountBet { get; set; }
-
-        public double AmountWon { get; set; }
     }
 }

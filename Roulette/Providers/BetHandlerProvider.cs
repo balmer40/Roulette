@@ -18,8 +18,7 @@ namespace Roulette.Providers
 
         public IBetHandler GetBetHandler(BetType betType)
         {
-            // TODO check for null and throw exception
-            return _betHandlers.FirstOrDefault(betHandler => betHandler.BetType == betType);
+            return _betHandlers.First(betHandler => betHandler.BetType == betType);
         }
         
     }

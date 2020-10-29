@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Roulette.Models.Requests
 {
@@ -11,12 +12,14 @@ namespace Roulette.Models.Requests
         public Guid CustomerId { get; set; }
 
         [Required]
+        [EnumDataType(typeof(BetType))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public BetType BetType { get; set; }
 
-        [Range(0, 36)]
+        [Range(Ranges.MinimumPosition, Ranges.MaximumPosition)]
         public int Position { get; set; }
 
-        [Range(1, 10000)] //only allow maximum of 10k bet
+        [Range(Ranges.MinimumBet, Ranges.MaximumBet)] 
         public double Amount { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

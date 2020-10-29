@@ -38,7 +38,7 @@ namespace Roulette.Controllers
         /// </summary>
         /// <param name="gameId"></param>
         /// <returns>OK</returns>
-        /// <response code="200">OK</response>
+        /// <response code="204">No Content</response>
         /// <response code="400">Bad request</response>
         /// <response code="401">Game not found</response>
         /// <response code="500">Unhandled exception</response>
@@ -46,11 +46,11 @@ namespace Roulette.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        [HttpPost("{gameId}/close-betting")]
+        [HttpPut("{gameId}/close-betting")]
         public async Task<IActionResult> CloseBetting(Guid gameId)
         {
             await _gameService.CloseBetting(gameId);
-            return Ok();
+            return NoContent();
         }
 
         /// <summary>
