@@ -8,9 +8,6 @@ namespace Roulette.Models.Requests
     public class AddBetRequest: IValidatableObject
     {
         [Required]
-        public Guid GameId { get; set; }
-
-        [Required]
         public Guid CustomerId { get; set; }
 
         [Required]

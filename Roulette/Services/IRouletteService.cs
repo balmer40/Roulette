@@ -11,10 +11,6 @@ namespace Roulette.Services
 
         Task CloseBetting(Guid gameId);
 
-        Task<AddBetResponse> AddBet(AddBetRequest request);
-
-        Task DeleteBet(DeleteBetRequest request);
-
         Task<PlayGameResponse> PlayGame(Guid gameId);
     }
 }

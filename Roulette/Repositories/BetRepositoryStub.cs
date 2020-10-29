@@ -9,8 +9,6 @@ namespace Roulette.Repositories
 {
     // although the methods in this class don't do anything asynchronous, in reality they would with database calls,
     // so I have made the methods return a Task
-
-    //TODO locks
     public class BetRepositoryStub : IBetRepository
     {
         private static readonly ConcurrentDictionary<Guid, Bet> Bets = new ConcurrentDictionary<Guid, Bet>();
@@ -34,6 +32,32 @@ namespace Roulette.Repositories
             }
 
             return Task.FromResult(betId);
+        }
+
+        public Task UpdateBet(Guid id, double amount)
+        {
+            if(!Bets.TryGetValue(id, out var bet))
+            {
+                throw new BetNotFoundException(id);
+            }
+
+            var newBet = new Bet
+            {
+                Id = bet.Id,
+                GameId = bet.GameId,
+                CustomerId = bet.CustomerId,
+                BetType = bet.BetType,
+                Position = bet.Position,
+                Amount = amount
+
+            };
+
+            if (!Bets.TryUpdate(id, newBet, bet))
+            {
+                throw new FailedToUpdateBetException(id);
+            }
+
+            return Task.CompletedTask;
         }
 
         public Task DeleteBet(Guid id)

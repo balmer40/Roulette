@@ -8,8 +8,6 @@ namespace Roulette.Repositories
 {
     // although the methods in this class don't do anything asynchronous, in reality they would with database calls,
     // so I have made the methods return a Task
-
-    //TODO locks
     public class GameRepositoryStub : IGameRepository
     {
         private static readonly ConcurrentDictionary<Guid, Game> Games = new ConcurrentDictionary<Guid, Game>();

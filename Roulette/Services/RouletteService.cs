@@ -1,7 +1,6 @@
 ﻿using Roulette.Exceptions;
 using Roulette.Handlers;
 using Roulette.Models;
-using Roulette.Models.Requests;
 using Roulette.Models.Responses;
 using Roulette.Providers;
 using Roulette.Repositories;
@@ -49,27 +48,6 @@ namespace Roulette.Services
             await _gameRepository.CloseBetting(gameId);
         }
 
-        public async Task<AddBetResponse> AddBet(AddBetRequest request)
-        {
-            await ValidateGameBettingIsOpen(request.GameId);
-
-            var betId = await _betRepository.CreateBet(
-                request.GameId,
-                request.CustomerId,
-                request.BetType,
-                request.Position,
-                request.Amount);
-
-            return new AddBetResponse { BetId = betId };
-        }
-
-        public async Task DeleteBet(DeleteBetRequest request)
-        {
-            await ValidateGameBettingIsOpen(request.GameId);
-
-            await _betRepository.DeleteBet(request.BetId);
-        }
-
         public async Task<PlayGameResponse> PlayGame(Guid gameId)
         {
             var game = await _gameRepository.GetById(gameId);
@@ -79,7 +57,6 @@ namespace Roulette.Services
             }
 
             var winningNumber = _gameService.GetWinningNumber();
-
             var allBets = await _betRepository.GetAllBetsForGame(gameId);
 
             if (!allBets.Any())
@@ -95,18 +72,14 @@ namespace Roulette.Services
             }
 
             var betsByType = GetBetsByType(allBets);
+            var customerWinningBets = GetWinningBetsByCustomer(betsByType, winningNumber);
 
-            var customerWinningBets = new Dictionary<Guid, ICollection<WinningBet>>();
-            foreach (var (betType, bets) in betsByType)
-            {
-                var betHandler = _betHandlerProvider.GetBetHandler(betType);
-                var winningBets = GetWinningBets(bets, betHandler, winningNumber);
-                AddToCustomerWinningBets(winningBets, customerWinningBets);
-            }
-
+            //TODO check it adds up
             // a dictionary of customer ids along with their total winnings
             var customerTotalWinnings = customerWinningBets
-                .ToDictionary(entry => entry.Key.ToString(), entry => entry.Value.Sum(bet => bet.AmountWon));
+                .ToDictionary(entry => entry.Key, entry => entry.Value.Sum(bet => bet.AmountWon));
+
+            //TODO losing bets
 
             //at this stage, the winning bets data would be stored and/or ETLed, but I have not implemented this
 
@@ -116,8 +89,7 @@ namespace Roulette.Services
             {
                 GameId = gameId,
                 WinningNumber = winningNumber,
-                WinningBets = customerWinningBets
-                    .ToDictionary(entry => entry.Key.ToString(), entry => entry.Value.ToArray()),
+                WinningBets = customerWinningBets,
                 CustomerTotalWinnings = customerTotalWinnings
 
             };
@@ -140,6 +112,19 @@ namespace Roulette.Services
             }
 
             return betsByType;
+        }
+
+        private Dictionary<string, WinningBet[]> GetWinningBetsByCustomer(Dictionary<BetType, ICollection<Bet>> betsByType, int winningNumber)
+        {
+            var customerWinningBets = new Dictionary<Guid, ICollection<WinningBet>>();
+            foreach (var (betType, bets) in betsByType)
+            {
+                var betHandler = _betHandlerProvider.GetBetHandler(betType);
+                var winningBets = GetWinningBets(bets, betHandler, winningNumber);
+                AddToCustomerWinningBets(winningBets, customerWinningBets);
+            }
+
+            return customerWinningBets.ToDictionary(entry => entry.Key.ToString(), entry => entry.Value.ToArray());
         }
 
         private Dictionary<Guid, WinningBet> GetWinningBets(IEnumerable<Bet> bets, IBetHandler betHandler, int winningNumber)
@@ -169,15 +154,6 @@ namespace Roulette.Services
                 {
                     customerWinnings.Add(customerId, new Collection<WinningBet> { winningBet });
                 }
-            }
-        }
-
-        private async Task ValidateGameBettingIsOpen(Guid gameId)
-        {
-            var game = await _gameRepository.GetById(gameId);
-            if (game.GameStatus == GameStatus.BettingClosed)
-            {
-                throw new GameBettingClosedException(game.Id);
             }
         }
     }

@@ -54,48 +54,6 @@ namespace Roulette.Tests.Controllers
 
         #endregion
 
-        #region AddBet
-
-        [Fact]
-        public async Task AddBet_AddsBet()
-        {
-            var expectedRequest = new AddBetRequest();
-            var mockService = Substitute.For<IRouletteService>();
-            var controller = new RouletteController(mockService);
-
-            await controller.AddBet(expectedRequest);
-            await mockService.Received().AddBet(expectedRequest);
-        }
-
-        [Fact]
-        public async Task AddBet_ReturnsBetResponse()
-        {
-            var expectedBetResponse = new AddBetResponse();
-            var mockService = Substitute.For<IRouletteService>();
-            mockService.AddBet(Arg.Any<AddBetRequest>()).Returns(expectedBetResponse);
-            var controller = new RouletteController(mockService);
-
-            var result = await controller.AddBet(new AddBetRequest()) as OkNegotiatedContentResult<NewGameResponse>;
-            result.Content.Should().Be(expectedBetResponse);
-        }
-
-        #endregion
-
-        #region DeleteBet
-
-        [Fact]
-        public async Task DeleteBet_DeletesBet()
-        {
-            var expectedDeleteBetRequest = new DeleteBetRequest();
-            var mockService = Substitute.For<IRouletteService>();
-            var controller = new RouletteController(mockService);
-
-            await controller.DeleteBet(expectedDeleteBetRequest);
-            await mockService.Received().DeleteBet(expectedDeleteBetRequest);
-        }
-
-        #endregion
-
         #region PlayGame
 
         [Fact]

@@ -90,150 +90,6 @@ namespace Roulette.Tests.Services
 
         #endregion
 
-        #region AddBet
-
-        [Fact]
-        public async Task AddBet_CreatesBet()
-        {
-            var expectedGameId = Guid.NewGuid();
-            var expectedCustomerId = Guid.NewGuid();
-            var expectedBetType = BetType.Single;
-            var expectedPosition = 1;
-            var expectedAmount = 50.0;
-
-            var mockGameRepository = Substitute.For<IGameRepository>();
-            mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game());
-            var mockBetRepository = Substitute.For<IBetRepository>();
-            var service = new RouletteService(
-                mockGameRepository,
-                mockBetRepository,
-                Substitute.For<IGameService>(),
-                Substitute.For<IBetHandlerProvider>());
-
-            await service.AddBet(
-                new AddBetRequest
-                {
-                    GameId = expectedGameId,
-                    CustomerId = expectedCustomerId,
-                    BetType = expectedBetType,
-                    Position = expectedPosition,
-                    Amount = expectedAmount
-                });
-
-            await mockBetRepository.Received().CreateBet(
-                expectedGameId,
-                expectedCustomerId,
-                expectedBetType,
-                expectedPosition,
-                expectedAmount);
-        }
-
-        [Fact]
-        public async Task AddBet_ThrowsWhenGameIsClosed()
-        {
-            var mockRepository = Substitute.For<IGameRepository>();
-            mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.GameClosed });
-
-            var service = new RouletteService(
-                mockRepository,
-                Substitute.For<IBetRepository>(),
-                Substitute.For<IGameService>(),
-                Substitute.For<IBetHandlerProvider>());
-
-            await Assert.ThrowsAsync<GameClosedException>(() => service.AddBet(new AddBetRequest()));
-        }
-
-        [Fact]
-        public async Task AddBet_ThrowsWhenBettingIsClosed()
-        {
-            var mockRepository = Substitute.For<IGameRepository>();
-            mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-
-            var service = new RouletteService(
-                mockRepository,
-                Substitute.For<IBetRepository>(),
-                Substitute.For<IGameService>(),
-                Substitute.For<IBetHandlerProvider>());
-
-            await Assert.ThrowsAsync<GameBettingClosedException>(() => service.AddBet(new AddBetRequest()));
-        }
-
-        [Fact]
-        public async Task AddBet_ReturnsBetId()
-        {
-            var expectedBetId = Guid.NewGuid();
-            var mockGameRepository = Substitute.For<IGameRepository>();
-            mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game());
-            var mockBetRepository = Substitute.For<IBetRepository>();
-            mockBetRepository.CreateBet(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<BetType>(), Arg.Any<int>(), Arg.Any<double>())
-                .Returns(expectedBetId);
-
-            var service = new RouletteService(
-                mockGameRepository,
-                mockBetRepository,
-                Substitute.For<IGameService>(),
-                Substitute.For<IBetHandlerProvider>());
-
-            var result = await service.AddBet(new AddBetRequest());
-
-            result.Should().BeOfType(typeof(AddBetResponse));
-            result.BetId.Should().Be(expectedBetId);
-        }
-
-        #endregion
-
-        #region DeleteBet
-
-        [Fact]
-        public async Task DeleteBet_DeletesBet()
-        {
-            var expectedBetId = Guid.NewGuid();
-            var mockGameRepository = Substitute.For<IGameRepository>();
-            mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game());
-            var mockBetRepository = Substitute.For<IBetRepository>();
-            var service = new RouletteService(
-                mockGameRepository,
-                mockBetRepository,
-                Substitute.For<IGameService>(),
-                Substitute.For<IBetHandlerProvider>());
-
-            await service.DeleteBet(new DeleteBetRequest { BetId = expectedBetId });
-
-            await mockBetRepository.Received().DeleteBet(expectedBetId);
-        }
-
-        [Fact]
-        public async Task DeleteBet_ThrowsWhenGameIsClosed()
-        {
-            var mockRepository = Substitute.For<IGameRepository>();
-            mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.GameClosed });
-
-            var service = new RouletteService(
-                mockRepository,
-                Substitute.For<IBetRepository>(),
-                Substitute.For<IGameService>(),
-                Substitute.For<IBetHandlerProvider>());
-
-            await Assert.ThrowsAsync<GameClosedException>(() => service.DeleteBet(new DeleteBetRequest()));
-        }
-
-        [Fact]
-        public async Task DeleteBet_ThrowsWhenBettingIsClosed()
-        {
-            var mockRepository = Substitute.For<IGameRepository>();
-            mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-
-            var service = new RouletteService(
-                mockRepository,
-                Substitute.For<IBetRepository>(),
-                Substitute.For<IGameService>(),
-                Substitute.For<IBetHandlerProvider>());
-
-            await Assert.ThrowsAsync<GameBettingClosedException>(() => service.DeleteBet(new DeleteBetRequest()));
-        }
-
-        #endregion
-
         #region PlayGame
 
         [Fact]
@@ -248,7 +104,7 @@ namespace Roulette.Tests.Services
                 Substitute.For<IGameService>(),
                 Substitute.For<IBetHandlerProvider>());
 
-            await Assert.ThrowsAsync<GameClosedException>(() => service.AddBet(new AddBetRequest()));
+            await Assert.ThrowsAsync<GameClosedException>(() => service.PlayGame(Guid.NewGuid()));
         }
 
         [Fact]
@@ -263,7 +119,7 @@ namespace Roulette.Tests.Services
                 Substitute.For<IGameService>(),
                 Substitute.For<IBetHandlerProvider>());
 
-            await Assert.ThrowsAsync<GameBettingOpenException>(() => service.AddBet(new AddBetRequest()));
+            await Assert.ThrowsAsync<GameBettingOpenException>(() => service.PlayGame(Guid.NewGuid()));
         }
 
         [Fact]

@@ -67,6 +67,49 @@ namespace Roulette.Tests.Repositories
 
         #endregion
 
+        #region UpdateBet
+
+        [Fact]
+        public async Task UpdateBet_UpdatesBet()
+        {
+            var repository = new BetRepositoryStub();
+
+            var expectedGameId = Guid.NewGuid();
+            var expectedCustomerId = Guid.NewGuid();
+            var expectedBetType = BetType.Single;
+            var expectedPosition = 1;
+            var expectedAmount = 50.0;
+
+            var expectedBetId = await repository.CreateBet(
+                expectedGameId,
+                expectedCustomerId,
+                expectedBetType,
+                expectedPosition,
+                10.0);
+
+            await repository.UpdateBet(expectedBetId, expectedAmount);
+
+            var bets = await repository.GetAllBetsForGame(expectedGameId);
+
+            bets.Length.Should().Be(1);
+            bets[0].Id.Should().Be(expectedBetId);
+            bets[0].GameId.Should().Be(expectedGameId);
+            bets[0].CustomerId.Should().Be(expectedCustomerId);
+            bets[0].BetType.Should().Be(expectedBetType);
+            bets[0].Position.Should().Be(expectedPosition);
+            bets[0].Amount.Should().Be(expectedAmount);
+        }
+
+        [Fact]
+        public async Task UpdateBet_ThrowsWhenGameNotFound()
+        {
+            var repository = new BetRepositoryStub();
+
+            await Assert.ThrowsAsync<BetNotFoundException>(() => repository.UpdateBet(Guid.NewGuid(), 1));
+        }
+
+        #endregion
+
         #region DeleteBet
 
         [Fact]
