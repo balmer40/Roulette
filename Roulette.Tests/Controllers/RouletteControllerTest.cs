@@ -18,7 +18,7 @@ namespace Roulette.Tests.Controllers
         [Fact]
         public async Task NewGame_CreatesNewGame()
         {
-            var mockService = Substitute.For<IRouletteService>();
+            var mockService = Substitute.For<IGameService>();
             var controller = new RouletteController(mockService);
 
             await controller.NewGame();
@@ -29,7 +29,7 @@ namespace Roulette.Tests.Controllers
         public async Task NewGame_ReturnsGameResponse()
         {
             var expectedNewGameResponse = new NewGameResponse();
-            var mockService = Substitute.For<IRouletteService>();
+            var mockService = Substitute.For<IGameService>();
             mockService.CreateNewGame().Returns(expectedNewGameResponse);
             var controller = new RouletteController(mockService);
 
@@ -45,7 +45,7 @@ namespace Roulette.Tests.Controllers
         public async Task CloseBetting_ClosesBetting()
         {
             var expectedGameId = Guid.NewGuid();
-            var mockService = Substitute.For<IRouletteService>();
+            var mockService = Substitute.For<IGameService>();
             var controller = new RouletteController(mockService);
 
             await controller.CloseBetting(expectedGameId);
@@ -60,7 +60,7 @@ namespace Roulette.Tests.Controllers
         public async Task PlayGame_PlaysGame()
         {
             var expectedGameId = Guid.NewGuid();
-            var mockService = Substitute.For<IRouletteService>();
+            var mockService = Substitute.For<IGameService>();
             var controller = new RouletteController(mockService);
 
             await controller.PlayGame(expectedGameId);
@@ -71,7 +71,7 @@ namespace Roulette.Tests.Controllers
         public async Task PlayGame_ReturnsPlayResponse()
         {
             var expectedPlayResponse = new PlayGameResponse();
-            var mockService = Substitute.For<IRouletteService>();
+            var mockService = Substitute.For<IGameService>();
             mockService.PlayGame(Arg.Any<Guid>()).Returns(expectedPlayResponse);
             var controller = new RouletteController(mockService);
 

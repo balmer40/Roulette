@@ -12,12 +12,12 @@ namespace Roulette
     {
         public static void AddControllerDependencies(this IServiceCollection services)
         {
-            services.TryAddScoped<IRouletteService, RouletteService>();
+            services.TryAddScoped<IGameService, GameService>();
         }
 
         public static void AddServiceDependencies(this IServiceCollection services)
         {
-            services.TryAddScoped<IGameService, GameService>();
+            services.TryAddScoped<ISpinWheelService, SpinWheelService>();
             services.TryAddSingleton<IGameRepository, GameRepositoryStub>();
             services.TryAddSingleton<IBetRepository, BetRepositoryStub>();
         }

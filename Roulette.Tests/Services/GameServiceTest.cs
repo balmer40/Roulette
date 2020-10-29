@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Roulette.Tests.Services
 {
-    public class RouletteServiceTest
+    public class GameServiceTest
     {
         #region CreateNewGame
 
@@ -23,10 +23,10 @@ namespace Roulette.Tests.Services
         public async Task CreateNewGame_CreatesNewGame()
         {
             var mockRepository = Substitute.For<IGameRepository>();
-            var service = new RouletteService(
+            var service = new GameService(
                 mockRepository,
                 Substitute.For<IBetRepository>(),
-                Substitute.For<IGameService>(),
+                Substitute.For<ISpinWheelService>(),
                 Substitute.For<IBetHandlerProvider>());
 
             await service.CreateNewGame();
@@ -39,10 +39,10 @@ namespace Roulette.Tests.Services
             var expectedGameId = Guid.NewGuid();
             var mockRepository = Substitute.For<IGameRepository>();
             mockRepository.CreateGame().Returns(expectedGameId);
-            var service = new RouletteService(
+            var service = new GameService(
                 mockRepository,
                 Substitute.For<IBetRepository>(),
-                Substitute.For<IGameService>(),
+                Substitute.For<ISpinWheelService>(),
                 Substitute.For<IBetHandlerProvider>());
 
             var result = await service.CreateNewGame();
@@ -62,10 +62,10 @@ namespace Roulette.Tests.Services
             var mockRepository = Substitute.For<IGameRepository>();
             mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game ());
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockRepository,
                 Substitute.For<IBetRepository>(),
-                Substitute.For<IGameService>(),
+                Substitute.For<ISpinWheelService>(),
                 Substitute.For<IBetHandlerProvider>());
 
             await service.CloseBetting(expectedGameId);
@@ -79,10 +79,10 @@ namespace Roulette.Tests.Services
             var expectedGameId = Guid.NewGuid();
             var mockRepository = Substitute.For<IGameRepository>();
             mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.GameClosed });
-            var service = new RouletteService(
+            var service = new GameService(
                 mockRepository,
                 Substitute.For<IBetRepository>(),
-                Substitute.For<IGameService>(),
+                Substitute.For<ISpinWheelService>(),
                 Substitute.For<IBetHandlerProvider>());
 
             await Assert.ThrowsAsync<GameClosedException>(() => service.CloseBetting(expectedGameId));
@@ -98,10 +98,10 @@ namespace Roulette.Tests.Services
             var mockRepository = Substitute.For<IGameRepository>();
             mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.GameClosed });
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockRepository,
                 Substitute.For<IBetRepository>(),
-                Substitute.For<IGameService>(),
+                Substitute.For<ISpinWheelService>(),
                 Substitute.For<IBetHandlerProvider>());
 
             await Assert.ThrowsAsync<GameClosedException>(() => service.PlayGame(Guid.NewGuid()));
@@ -113,10 +113,10 @@ namespace Roulette.Tests.Services
             var mockRepository = Substitute.For<IGameRepository>();
             mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.GameOpen });
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockRepository,
                 Substitute.For<IBetRepository>(),
-                Substitute.For<IGameService>(),
+                Substitute.For<ISpinWheelService>(),
                 Substitute.For<IBetHandlerProvider>());
 
             await Assert.ThrowsAsync<GameBettingOpenException>(() => service.PlayGame(Guid.NewGuid()));
@@ -127,9 +127,9 @@ namespace Roulette.Tests.Services
         {
             var mockRepository = Substitute.For<IGameRepository>();
             mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-            var mockGameService = Substitute.For<IGameService>();
+            var mockGameService = Substitute.For<ISpinWheelService>();
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockRepository,
                 Substitute.For<IBetRepository>(),
                 mockGameService,
@@ -147,10 +147,10 @@ namespace Roulette.Tests.Services
             var expectedWinningNumber = 1;
             var mockRepository = Substitute.For<IGameRepository>();
             mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-            var mockGameService = Substitute.For<IGameService>();
+            var mockGameService = Substitute.For<ISpinWheelService>();
             mockGameService.GetWinningNumber().Returns(expectedWinningNumber);
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockRepository,
                 Substitute.For<IBetRepository>(),
                 mockGameService,
@@ -170,11 +170,11 @@ namespace Roulette.Tests.Services
             var expectedGameId = Guid.NewGuid();
             var mockGameRepository = Substitute.For<IGameRepository>();
             mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-            var mockGameService = Substitute.For<IGameService>();
+            var mockGameService = Substitute.For<ISpinWheelService>();
             mockGameService.GetWinningNumber().Returns(1);
             var mockBetRepository = Substitute.For<IBetRepository>();
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockGameRepository,
                 mockBetRepository,
                 mockGameService,
@@ -191,13 +191,13 @@ namespace Roulette.Tests.Services
             var expectedBetType = BetType.Single;
             var mockGameRepository = Substitute.For<IGameRepository>();
             mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-            var mockGameService = Substitute.For<IGameService>();
+            var mockGameService = Substitute.For<ISpinWheelService>();
             mockGameService.GetWinningNumber().Returns(1);
             var mockBetRepository = Substitute.For<IBetRepository>();
             mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { new Bet { BetType = expectedBetType } });
             var mockBetHandlerProvider = Substitute.For<IBetHandlerProvider>();
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockGameRepository,
                 mockBetRepository,
                 mockGameService,
@@ -215,7 +215,7 @@ namespace Roulette.Tests.Services
             var expectedWinningNumber = 1;
             var mockGameRepository = Substitute.For<IGameRepository>();
             mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-            var mockGameService = Substitute.For<IGameService>();
+            var mockGameService = Substitute.For<ISpinWheelService>();
             mockGameService.GetWinningNumber().Returns(expectedWinningNumber);
             var mockBetRepository = Substitute.For<IBetRepository>();
             mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { new Bet { BetType = BetType.Single, Position = expectedBetPosition } });
@@ -223,7 +223,7 @@ namespace Roulette.Tests.Services
             var mockBetHandlerProvider = Substitute.For<IBetHandlerProvider>();
             mockBetHandlerProvider.GetBetHandler(Arg.Any<BetType>()).Returns(mockBetHandler);
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockGameRepository,
                 mockBetRepository,
                 mockGameService,
@@ -239,7 +239,7 @@ namespace Roulette.Tests.Services
         {
             var mockGameRepository = Substitute.For<IGameRepository>();
             mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-            var mockGameService = Substitute.For<IGameService>();
+            var mockGameService = Substitute.For<ISpinWheelService>();
             mockGameService.GetWinningNumber().Returns(1);
             var mockBetRepository = Substitute.For<IBetRepository>();
             mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { new Bet { BetType = BetType.Single } });
@@ -248,7 +248,7 @@ namespace Roulette.Tests.Services
             mockBetHandlerProvider.GetBetHandler(Arg.Any<BetType>()).Returns(mockBetHandler);
             mockBetHandler.IsWinningBet(Arg.Any<int>(), Arg.Any<int>()).Returns(true);
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockGameRepository,
                 mockBetRepository,
                 mockGameService,
@@ -274,7 +274,7 @@ namespace Roulette.Tests.Services
             var expectedWinningBet = new WinningBet { Id = expectedBetId, BetType = expectedBetType, Position = expectedPosition, AmountBet = expectedAmountBet, AmountWon = expectedAmountWon };
             var mockGameRepository = Substitute.For<IGameRepository>();
             mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-            var mockGameService = Substitute.For<IGameService>();
+            var mockGameService = Substitute.For<ISpinWheelService>();
             mockGameService.GetWinningNumber().Returns(expectedWinningNumber);
             var mockBetRepository = Substitute.For<IBetRepository>();
             mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { new Bet { BetType = BetType.Single } });
@@ -284,7 +284,7 @@ namespace Roulette.Tests.Services
             mockBetHandler.IsWinningBet(Arg.Any<int>(), Arg.Any<int>()).Returns(true);
             mockBetHandler.CalculateWinnings(Arg.Any<Bet>()).Returns(expectedWinningBet);
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockGameRepository,
                 mockBetRepository,
                 mockGameService,
@@ -323,7 +323,7 @@ namespace Roulette.Tests.Services
             var expectedSecondWinningBet = new WinningBet { AmountWon = expectedSecondAmountWon };
             var mockGameRepository = Substitute.For<IGameRepository>();
             mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-            var mockGameService = Substitute.For<IGameService>();
+            var mockGameService = Substitute.For<ISpinWheelService>();
             mockGameService.GetWinningNumber().Returns(expectedWinningNumber);
             var mockBetRepository = Substitute.For<IBetRepository>();
             mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { new Bet { BetType = BetType.Single }, new Bet { BetType = BetType.Single } });
@@ -333,7 +333,7 @@ namespace Roulette.Tests.Services
             mockBetHandler.IsWinningBet(Arg.Any<int>(), Arg.Any<int>()).Returns(true);
             mockBetHandler.CalculateWinnings(Arg.Any<Bet>()).Returns(expectedFirstWinningBet, expectedSecondWinningBet);
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockGameRepository,
                 mockBetRepository,
                 mockGameService,
@@ -353,7 +353,7 @@ namespace Roulette.Tests.Services
             var expectedGameId = Guid.NewGuid();
             var mockGameRepository = Substitute.For<IGameRepository>();
             mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
-            var mockGameService = Substitute.For<IGameService>();
+            var mockGameService = Substitute.For<ISpinWheelService>();
             mockGameService.GetWinningNumber().Returns(1);
             var mockBetRepository = Substitute.For<IBetRepository>();
             mockBetRepository.GetAllBetsForGame(Arg.Any<Guid>()).Returns(new[] { new Bet { BetType = BetType.Single }, new Bet { BetType = BetType.Single } });
@@ -363,7 +363,7 @@ namespace Roulette.Tests.Services
             mockBetHandler.IsWinningBet(Arg.Any<int>(), Arg.Any<int>()).Returns(true);
             mockBetHandler.CalculateWinnings(Arg.Any<Bet>()).Returns(new WinningBet());
 
-            var service = new RouletteService(
+            var service = new GameService(
                 mockGameRepository,
                 mockBetRepository,
                 mockGameService,

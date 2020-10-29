@@ -11,11 +11,11 @@ namespace Roulette.Controllers
     [Route("api/[controller]")]
     public class RouletteController : ControllerBase
     {
-        private readonly IRouletteService _rouletteService;
+        private readonly IGameService _gameService;
 
-        public RouletteController(IRouletteService rouletteService)
+        public RouletteController(IGameService gameService)
         {
-            _rouletteService = rouletteService;
+            _gameService = gameService;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Roulette.Controllers
         [HttpPost("new")]
         public async Task<IActionResult> NewGame()
         {
-            var response = await _rouletteService.CreateNewGame();
+            var response = await _gameService.CreateNewGame();
             return Ok(response);
         }
 
@@ -49,7 +49,7 @@ namespace Roulette.Controllers
         [HttpPost("{gameId}/close-betting")]
         public async Task<IActionResult> CloseBetting(Guid gameId)
         {
-            await _rouletteService.CloseBetting(gameId);
+            await _gameService.CloseBetting(gameId);
             return Ok();
         }
 
@@ -69,7 +69,7 @@ namespace Roulette.Controllers
         [HttpPost("{gameId}/play")]
         public async Task<IActionResult> PlayGame(Guid gameId)
         {
-            var response = await _rouletteService.PlayGame(gameId);
+            var response = await _gameService.PlayGame(gameId);
             return Ok(response);
         }
     }
