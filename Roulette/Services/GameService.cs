@@ -17,18 +17,18 @@ namespace Roulette.Services
         private readonly IGameRepository _gameRepository;
         private readonly IBetRepository _betRepository;
         private readonly ISpinWheelService _spinWheelService;
-        private readonly IBetHandlerProvider _betHandlerProvider;
+        private readonly IBetTypeHandlerProvider _betTypeHandlerProvider;
 
         public GameService(
             IGameRepository gameRepository,
             IBetRepository betRepository,
             ISpinWheelService spinWheelService,
-            IBetHandlerProvider betHandlerProvider)
+            IBetTypeHandlerProvider betTypeHandlerProvider)
         {
             _gameRepository = gameRepository;
             _betRepository = betRepository;
             _spinWheelService = spinWheelService;
-            _betHandlerProvider = betHandlerProvider;
+            _betTypeHandlerProvider = betTypeHandlerProvider;
         }
 
         public async Task<NewGameResponse> CreateNewGame()
@@ -55,12 +55,12 @@ namespace Roulette.Services
 
             if (!allBets.Any())
             {
-                //TODO log
                 return new PlayGameResponse
                 {
                     GameId = gameId,
                     WinningNumber = winningNumber,
                     WinningBets = new Dictionary<string, WinningBet[]>(),
+                    LosingBets = new Dictionary<string, LosingBet[]>(),
                     CustomerTotalWinnings = new Dictionary<string, double>()
                 };
             }
@@ -112,8 +112,8 @@ namespace Roulette.Services
             var customerLosingBets = new Dictionary<Guid, ICollection<LosingBet>>();
             foreach (var (betType, bets) in betsByType)
             {
-                var betHandler = _betHandlerProvider.GetBetHandler(betType);
-                SortBets(bets, betHandler, winningNumber, customerWinningBets, customerLosingBets);
+                var betTypeHandler = _betTypeHandlerProvider.GetBetTypeHandler(betType);
+                SortBets(bets, betTypeHandler, winningNumber, customerWinningBets, customerLosingBets);
             }
 
             return (customerWinningBets.ToDictionary(entry => entry.Key.ToString(), entry => entry.Value.ToArray()),
@@ -122,16 +122,16 @@ namespace Roulette.Services
 
         private void SortBets(
             IEnumerable<Bet> bets, 
-            IBetHandler betHandler, 
+            IBetTypeHandler betTypeHandler, 
             int winningNumber, 
             Dictionary<Guid, ICollection<WinningBet>> customerWinningBets,
             Dictionary<Guid, ICollection<LosingBet>> customerLosingBets)
         {
             foreach (var bet in bets)
             {
-                if (betHandler.IsWinningBet(bet.Position, winningNumber))
+                if (betTypeHandler.IsWinningBet(bet.Position, winningNumber))
                 {
-                    var winningBet = betHandler.CalculateWinnings(bet);
+                    var winningBet = betTypeHandler.CalculateWinnings(bet);
                     AddToCustomerWinningBets(bet.CustomerId, winningBet, customerWinningBets);
                 }
                 else

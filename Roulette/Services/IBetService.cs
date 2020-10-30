@@ -9,7 +9,7 @@ namespace Roulette.Services
     {
         Task<AddBetResponse> AddBet(Guid gameId, AddBetRequest request);
 
-        Task UpdateBet(Guid gameId, Guid betId, UpdateBetRequest request);
+        Task<UpdateBetResponse> UpdateBet(Guid gameId, Guid betId, UpdateBetRequest request);
 
         Task DeleteBet(Guid gameId, Guid betId);
     }

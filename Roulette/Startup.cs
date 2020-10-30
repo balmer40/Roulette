@@ -23,7 +23,7 @@ namespace Roulette
             services.AddControllers();
             services.AddControllerDependencies();
             services.AddServiceDependencies();
-            services.AddSharedDependencies();
+            services.AddBetTypeDependencies();
 
             services.TryAddScoped<IExceptionFilter, ExceptionHandlerFilter>();
             var sp = services.BuildServiceProvider();

@@ -1,6 +1,7 @@
 ﻿using Roulette.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Roulette.Constants;
 
 namespace Roulette.Validators
 {

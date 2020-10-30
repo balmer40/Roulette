@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Roulette.Models
+﻿namespace Roulette.Models
 {
     public enum BetType
     {
@@ -13,14 +8,6 @@ namespace Roulette.Models
         Red,
         Black,
         Corner,
-        Column//,
-        //Street,
-        //SixLine,
-        //Low,
-        //High,       
-        //Even,
-        //Odd,    
-        //Dozen,
-        //Snake
+        Column
     }
 }

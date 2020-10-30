@@ -46,20 +46,20 @@ namespace Roulette.Controllers
         /// <param name="gameId"></param>
         /// <param name="betId"></param>
         /// <param name="request"></param>
-        /// <returns>OK</returns>
-        /// <response code="204">No Content</response>
+        /// <returns>OK with UpdateBetResponse</returns>
+        /// <response code="200">OK</response>
         /// <response code="400">Bad request</response>
         /// <response code="401">Game not found</response>
         /// <response code="500">Unhandled exception</response>
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UpdateBetResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         [HttpPut("{betId}")]
         public async Task<IActionResult> UpdateBet([FromRoute] Guid gameId, [FromRoute] Guid betId, [FromBody] UpdateBetRequest request)
         {
-            await _betService.UpdateBet(gameId, betId, request);
-            return NoContent();
+            var response = await _betService.UpdateBet(gameId, betId, request);
+            return Ok(response);
         }
 
         /// <summary>

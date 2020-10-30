@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Roulette.Constants;
 
 namespace Roulette.Models.Requests
 {
@@ -19,14 +20,15 @@ namespace Roulette.Models.Requests
         [Range(Ranges.MinimumPosition, Ranges.MaximumPosition)]
         public int Position { get; set; }
 
-        [Range(Ranges.MinimumBet, Ranges.MaximumBet)] 
+        [Range(Ranges.MinimumBet, Ranges.MaximumBet)]
+        [RegularExpression(RegularExpressions.Amount, ErrorMessage = "Amount can only have two decimal places")]
         public double Amount { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var betHandlerProvider = validationContext.GetService(typeof(IBetHandlerProvider)) as IBetHandlerProvider;
-            var betHandler = betHandlerProvider.GetBetHandler(BetType);
-            var result = betHandler.ValidatePosition(Position);
+            var betTypeHandlerProvider = validationContext.GetService(typeof(IBetTypeHandlerProvider)) as IBetTypeHandlerProvider;
+            var betTypeHandler = betTypeHandlerProvider.GetBetTypeHandler(BetType);
+            var result = betTypeHandler.ValidatePosition(Position);
 
             return new[] { result };
         }

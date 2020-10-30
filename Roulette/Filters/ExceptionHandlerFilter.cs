@@ -23,13 +23,13 @@ namespace Roulette.Filters
                     _logger.LogError($"NotFoundException occurred: {exception.Message}");
                     context.Result = new NotFoundObjectResult(exception.Message);
                     break;
-                case UpdateAmountTooHighException exception:
-                    _logger.LogWarning($"AmountTooHighException occurred: {exception.Message}");
+                case GameStatusException exception:
+                    _logger.LogWarning($"GameStatusException occurred: {exception.Message}");
                     context.Result = new BadRequestObjectResult(exception.Message);
                     break;
-                case GameStatusException exception:
-                    _logger.LogError($"GameStatusException occurred: {exception.Message}");
-                    context.Result = new ServerErrorResult(exception.Message);
+                case BetTypeNotConfiguredException exception:
+                    _logger.LogWarning($"BetTypeNotConfiguredException occurred: {exception.Message}");
+                    context.Result = new BadRequestObjectResult(exception.Message);
                     break;
                 case FailedToModifyException exception:
                     _logger.LogError($"FailedToModifyException occurred: {exception.Message}");

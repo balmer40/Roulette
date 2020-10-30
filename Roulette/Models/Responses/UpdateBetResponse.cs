@@ -1,6 +1,6 @@
 ﻿namespace Roulette.Models.Responses
 {
-    public class AddBetResponse
+    public class UpdateBetResponse
     {
         public Bet Bet { get; set; }
     }

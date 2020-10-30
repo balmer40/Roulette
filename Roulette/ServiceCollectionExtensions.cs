@@ -23,15 +23,15 @@ namespace Roulette
             services.TryAddSingleton<IBetRepository, BetRepositoryStub>();
         }
 
-        public static void AddSharedDependencies(this IServiceCollection services)
+        public static void AddBetTypeDependencies(this IServiceCollection services)
         {
             services.TryAddScoped<IBetTypeValidator, SingleBetTypeValidator>();
-            services.TryAddScoped<IBetHandler, SingleBetHandler>();
+            services.TryAddScoped<IBetTypeHandler, SingleBetTypeHandler>();
             services.TryAddScoped(provider => new[]
             {
-                provider.GetService<IBetHandler>()
+                provider.GetService<IBetTypeHandler>()
             });
-            services.TryAddScoped<IBetHandlerProvider, BetHandlerProvider>();
+            services.TryAddScoped<IBetTypeHandlerProvider, BetTypeHandlerProvider>();
         }
     }
 }

@@ -26,21 +26,23 @@ namespace Roulette.Services
         {
             await ValidateGameBettingIsOpen(gameId);
 
-            var betId = await _betRepository.CreateBet(
+            var bet = await _betRepository.CreateBet(
                 gameId,
                 request.CustomerId,
                 request.BetType,
                 request.Position,
                 request.Amount);
 
-            return new AddBetResponse { BetId = betId };
+            return new AddBetResponse { Bet = bet };
         }
 
-        public async Task UpdateBet(Guid gameId, Guid betId, UpdateBetRequest request)
+        public async Task<UpdateBetResponse> UpdateBet(Guid gameId, Guid betId, UpdateBetRequest request)
         {
             await ValidateGameBettingIsOpen(gameId);
 
-            await _betRepository.UpdateBet(betId, request.Amount);
+           var bet =  await _betRepository.UpdateBet(betId, request.Amount);
+
+           return new UpdateBetResponse { Bet = bet };
         }
 
         public async Task DeleteBet(Guid gameId, Guid betId)
@@ -53,9 +55,12 @@ namespace Roulette.Services
         private async Task ValidateGameBettingIsOpen(Guid gameId)
         {
             var game = await _gameRepository.GetById(gameId);
-            if (game.GameStatus == GameStatus.BettingClosed)
+            switch (game.GameStatus)
             {
-                throw new GameBettingClosedException(game.Id);
+                case GameStatus.GameClosed:
+                    throw new GameClosedException(game.Id);
+                case GameStatus.BettingClosed:
+                    throw new GameBettingClosedException(game.Id);
             }
         }
     }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
+using Roulette.Constants;
 
 namespace Roulette.Repositories
 {
@@ -13,7 +14,7 @@ namespace Roulette.Repositories
     {
         private static readonly ConcurrentDictionary<Guid, Bet> Bets = new ConcurrentDictionary<Guid, Bet>();
 
-        public Task<Guid> CreateBet(Guid gameId, Guid customerId, BetType betType, int position, double amount)
+        public Task<Bet> CreateBet(Guid gameId, Guid customerId, BetType betType, int position, double amount)
         {
             var betId = Guid.NewGuid();
             var bet = new Bet
@@ -31,19 +32,14 @@ namespace Roulette.Repositories
                 throw new FailedToCreateBetException(gameId);
             }
 
-            return Task.FromResult(betId);
+            return Task.FromResult(bet);
         }
 
-        public Task UpdateBet(Guid id, double amount)
+        public Task<Bet> UpdateBet(Guid id, double amount)
         {
             if(!Bets.TryGetValue(id, out var bet))
             {
                 throw new BetNotFoundException(id);
-            }
-
-            if(bet.Amount + amount > Ranges.MaximumBet)
-            {
-                throw new UpdateAmountTooHighException(id);
             }
 
             var newBet = new Bet
@@ -53,7 +49,7 @@ namespace Roulette.Repositories
                 CustomerId = bet.CustomerId,
                 BetType = bet.BetType,
                 Position = bet.Position,
-                Amount = bet.Amount + amount
+                Amount = amount
             };
 
             if (!Bets.TryUpdate(id, newBet, bet))
@@ -61,7 +57,7 @@ namespace Roulette.Repositories
                 throw new FailedToUpdateBetException(id);
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult(newBet);
         }
 
         public Task DeleteBet(Guid id)
