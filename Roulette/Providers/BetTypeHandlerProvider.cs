@@ -16,7 +16,7 @@ namespace Roulette.Providers
 
         public IBetTypeHandler GetBetTypeHandler(BetType betType)
         {
-            var betTypeHandler = _betTypeHandlers.FirstOrDefault(betTypeHandler => betTypeHandler.BetType == betType);
+            var betTypeHandler = _betTypeHandlers.FirstOrDefault(handler => handler.BetType == betType);
             if (betTypeHandler == null)
             {
                 throw new BetTypeNotConfiguredException(betType);

@@ -25,11 +25,36 @@ namespace Roulette
 
         public static void AddBetTypeDependencies(this IServiceCollection services)
         {
-            services.TryAddScoped<IBetTypeValidator, SingleBetTypeValidator>();
-            services.TryAddScoped<IBetTypeHandler, SingleBetTypeHandler>();
-            services.TryAddScoped(provider => new[]
+            services.TryAddScoped<IBetTypeHandler>(
+                provider => 
+                    new SingleBetTypeHandler(new SingleBetTypeValidator()));
+            services.TryAddScoped<IBetTypeHandler>(
+                provider =>
+                    new RedBetTypeHandler(new RedBetTypeValidator()));
+            services.TryAddScoped<IBetTypeHandler>(
+                provider =>
+                    new BlackBetTypeHandler(new BlackBetTypeValidator()));
+            services.TryAddScoped<IBetTypeHandler>(
+                provider =>
+                    new ColumnBetTypeHandler(new ColumnBetTypeValidator()));
+            services.TryAddScoped<IBetTypeHandler>(
+                provider =>
+                    new CornerBetTypeHandler(new CornerBetTypeValidator()));
+            services.TryAddScoped<IBetTypeHandler>(
+                provider =>
+                    new SplitHorizontalBetTypeHandler(new SplitHorizontalBetTypeValidator()));
+            services.TryAddScoped<IBetTypeHandler>(
+                provider =>
+                    new SplitVerticalBetTypeHandler(new SplitVerticalBetTypeValidator()));
+            services.TryAddScoped(_ => new[]
             {
-                provider.GetService<IBetTypeHandler>()
+                (IBetTypeHandler)new SingleBetTypeHandler(new SingleBetTypeValidator()),
+                (IBetTypeHandler)new RedBetTypeHandler(new RedBetTypeValidator()),
+                (IBetTypeHandler)new BlackBetTypeHandler(new BlackBetTypeValidator()),
+                (IBetTypeHandler)new ColumnBetTypeHandler(new ColumnBetTypeValidator()),
+                (IBetTypeHandler)new CornerBetTypeHandler(new CornerBetTypeValidator()),
+                (IBetTypeHandler)new SplitHorizontalBetTypeHandler(new SplitHorizontalBetTypeValidator()),
+                (IBetTypeHandler)new SplitVerticalBetTypeHandler(new SplitVerticalBetTypeValidator()),
             });
             services.TryAddScoped<IBetTypeHandlerProvider, BetTypeHandlerProvider>();
         }

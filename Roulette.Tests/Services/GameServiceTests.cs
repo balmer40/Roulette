@@ -73,7 +73,7 @@ namespace Roulette.Tests.Services
         }
 
         [Fact]
-        public async Task CloseBetting_ThrowsWhenGameIsNotOpen()
+        public async Task CloseBetting_ThrowsWhenGameIsClosed()
         {
             var expectedGameId = Guid.NewGuid();
             var mockRepository = Substitute.For<IGameRepository>();
@@ -85,6 +85,21 @@ namespace Roulette.Tests.Services
                 Substitute.For<IBetTypeHandlerProvider>());
 
             await Assert.ThrowsAsync<GameClosedException>(() => service.CloseBetting(expectedGameId));
+        }
+
+        [Fact]
+        public async Task CloseBetting_ThrowsWhenGameBettingIsClosed()
+        {
+            var expectedGameId = Guid.NewGuid();
+            var mockRepository = Substitute.For<IGameRepository>();
+            mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
+            var service = new GameService(
+                mockRepository,
+                Substitute.For<IBetRepository>(),
+                Substitute.For<ISpinWheelService>(),
+                Substitute.For<IBetTypeHandlerProvider>());
+
+            await Assert.ThrowsAsync<GameBettingClosedException>(() => service.CloseBetting(expectedGameId));
         }
 
         #endregion

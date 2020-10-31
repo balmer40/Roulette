@@ -15,16 +15,5 @@ namespace Roulette.Tests.Services
 
             result.Should().BeInRange(0, 36);
         }
-
-        [Fact]
-        public void GetWinningNumber_ReturnsDifferentWinningNumberEachCall()
-        {
-            var service = new SpinWheelService();
-
-            var firstResult = service.GetWinningNumber();
-            var secondResult = service.GetWinningNumber();
-
-            firstResult.Should().NotBe(secondResult);
-        }
     }
 }

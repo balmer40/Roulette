@@ -11,7 +11,7 @@ namespace Roulette.Handlers
         public BetType BetType { get; set; }
         public IBetTypeValidator BetTypeValidator { get; }
 
-        public BetTypeHandler(BetType betType, IBetTypeValidator betTypeValidator, int betMultiplier)
+        protected BetTypeHandler(BetType betType, IBetTypeValidator betTypeValidator, int betMultiplier)
         {
             _betMultiplier = betMultiplier;
             BetType = betType;

@@ -40,7 +40,7 @@ namespace Roulette.Services
         public async Task CloseBetting(Guid gameId)
         {
             var game = await _gameRepository.GetById(gameId);
-            await ValidateGameIsOpen(game);
+            ValidateBettingIsOpen(game);
 
             await _gameRepository.CloseBetting(gameId);
         }
@@ -48,7 +48,7 @@ namespace Roulette.Services
         public async Task<PlayGameResponse> PlayGame(Guid gameId)
         {
             var game = await _gameRepository.GetById(gameId);
-            await ValidateGameIsPlayable(game);
+            ValidateGameIsPlayable(game);
 
             var winningNumber = _spinWheelService.GetWinningNumber();
             var allBets = await _betRepository.GetAllBetsForGame(gameId);
@@ -171,7 +171,7 @@ namespace Roulette.Services
             }
         }
 
-        private async Task ValidateGameIsOpen(Game game)
+        private void ValidateGameIsOpen(Game game)
         {
             if (game.GameStatus == GameStatus.GameClosed)
             {
@@ -179,9 +179,19 @@ namespace Roulette.Services
             }
         }
 
-        private async Task ValidateGameIsPlayable(Game game)
+        private void ValidateBettingIsOpen(Game game)
         {
-            await ValidateGameIsOpen(game);
+            ValidateGameIsOpen(game);
+
+            if (game.GameStatus == GameStatus.BettingClosed)
+            {
+                throw new GameBettingClosedException(game.Id);
+            }
+        }
+
+        private void ValidateGameIsPlayable(Game game)
+        {
+            ValidateGameIsOpen(game);
 
             if (game.GameStatus == GameStatus.GameOpen)
             {
