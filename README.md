@@ -8,7 +8,7 @@ Run the executable found in the Run folder in the project root to launch the ser
 
 The app is set to run on http://localhost:5000 by default (would be https in prod). 
 
-The roulette.postman_collection.json found in the project root can be imported into Postman to test the application. 
+The roulette.postman_collection.json found in the project root can be imported into Postman to test the application. You can also go to http://localhost:5000/swagger/index.html to see the swagger representation.
 
 The collection is set up in such a way that gameId is copied over to other requests, so you don’t have to copy it yourself. 
 
