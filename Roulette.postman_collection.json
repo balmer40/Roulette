@@ -1,0 +1,193 @@
+{
+	"info": {
+		"_postman_id": "a5ffb5d2-0a85-438c-935d-089981b1633c",
+		"name": "Roulette",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "NewGame",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "20afb457-4bf4-4fd9-80fa-063a9afbb3fa",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.globals.set(\"gameId\", jsonData.gameId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/roulette/new",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"roulette",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AddBet",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "34aa4c36-cfea-4773-8e9f-b605cda487d8",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.globals.set(\"betId\", jsonData.bet.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"CustomerId\": \"e8b2280b-a4a7-4664-913a-1326551469d7\",\r\n    \"BetType\": \"Single\",\r\n    \"Position\":23,\r\n    \"Amount\": 25\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/roulette/{{gameId}}/bet",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"roulette",
+						"{{gameId}}",
+						"bet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CloseBetting",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/roulette/{{gameId}}/close-betting",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"roulette",
+						"{{gameId}}",
+						"close-betting"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Play Game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/roulette/{{gameId}}/play",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"roulette",
+						"{{gameId}}",
+						"play"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateBet",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Amount\": 9999.0\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/roulette/{{gameId}}/bet/{{betId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"roulette",
+						"{{gameId}}",
+						"bet",
+						"{{betId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteBet",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/roulette/{{gameId}}/bet/{{betId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"roulette",
+						"{{gameId}}",
+						"bet",
+						"{{betId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
