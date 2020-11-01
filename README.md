@@ -4,7 +4,7 @@
 
 Please check out the Roulette API guide in the project root on guidance for the endpoints. 
 
-The app can be run via the executable in the Run folder in the project root. Or you can also open up Visual Studio and run from there. 
+The app can be run via the executable in the Run folder in the project root(I have merged this into master just as a convenience). Or you can also open up Visual Studio and run from there. 
 
 The app is set to run on http://localhost:5000 by default (would be https in prod). 
 
