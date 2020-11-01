@@ -18,7 +18,7 @@ namespace Roulette.Handlers
             BetTypeValidator = betTypeValidator;
         }
 
-        public ValidationResult ValidatePosition(int position = 0) => BetTypeValidator.ValidatePosition(position);
+        public ValidationResult ValidatePosition(int? position) => BetTypeValidator.ValidatePosition(position);
 
         public WinningBet CalculateWinnings(Bet bet)
         {

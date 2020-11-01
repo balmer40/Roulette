@@ -13,9 +13,20 @@ namespace Roulette.Tests.Validators
         {
             var validator = new RedBetTypeValidator();
 
-            var result = validator.ValidatePosition();
+            var result = validator.ValidatePosition(null);
 
             result.Should().Be(ValidationResult.Success);
+        }
+
+        [Fact]
+        public void ValidatePosition_ReturnsPositionNotAllowedResult()
+        {
+            var validator = new RedBetTypeValidator();
+
+            var result = validator.ValidatePosition(1);
+
+            result.Should().BeOfType(typeof(PositionNotAllowedValidationResult));
+            result.ErrorMessage.Should().Contain(BetType.Red.ToString());
         }
     }
 }

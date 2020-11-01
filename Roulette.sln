@@ -5,7 +5,12 @@ VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roulette", "Roulette\Roulette.csproj", "{24EC56B8-D6CD-4E7B-9E00-7D03014D76B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roulette.Tests", "Roulette.Tests\Roulette.Tests.csproj", "{5B8AF2FA-7F9F-488A-9D8B-48298371B111}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roulette.Tests", "Roulette.Tests\Roulette.Tests.csproj", "{5B8AF2FA-7F9F-488A-9D8B-48298371B111}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{045A110A-DBC2-479F-B109-2C7A07BAC2DD}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Desktop\Roulette.postman_collection.json = ..\..\..\Desktop\Roulette.postman_collection.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -55,6 +55,7 @@ namespace Roulette.Services
 
             if (!allBets.Any())
             {
+                await _gameRepository.CloseGame(gameId);
                 return new PlayGameResponse
                 {
                     GameId = gameId,
@@ -129,7 +130,7 @@ namespace Roulette.Services
         {
             foreach (var bet in bets)
             {
-                if (betTypeHandler.IsWinningBet(bet.Position, winningNumber))
+                if (betTypeHandler.IsWinningBet(winningNumber, bet.Position.GetValueOrDefault(0)))
                 {
                     var winningBet = betTypeHandler.CalculateWinnings(bet);
                     AddToCustomerWinningBets(bet.CustomerId, winningBet, customerWinningBets);

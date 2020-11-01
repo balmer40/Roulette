@@ -4,6 +4,7 @@ using Roulette.Models.Requests;
 using Roulette.Models.Responses;
 using Roulette.Repositories;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Roulette.Services

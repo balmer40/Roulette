@@ -6,7 +6,7 @@ namespace Roulette.Repositories
 {
     public interface IBetRepository
     {
-        Task<Bet> CreateBet(Guid gameId, Guid customerId, BetType betType, int position, double amount);
+        Task<Bet> CreateBet(Guid gameId, Guid customerId, BetType betType, int? position, double amount);
 
         Task<Bet> UpdateBet(Guid id, double amount);
 

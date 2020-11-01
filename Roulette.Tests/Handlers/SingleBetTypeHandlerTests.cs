@@ -15,16 +15,17 @@ namespace Roulette.Tests.Handlers
         [Fact]
         public void ValidatePosition_ValidatesPosition()
         {
+            var expectedPosition = 1;
             var mockBetTypeValidator = Substitute.For<IBetTypeValidator>();
             var betTypeHandler = new SingleBetTypeHandler(mockBetTypeValidator);
 
-            betTypeHandler.ValidatePosition();
+            betTypeHandler.ValidatePosition(expectedPosition);
 
-            mockBetTypeValidator.Received().ValidatePosition();
+            mockBetTypeValidator.Received().ValidatePosition(expectedPosition);
         }
 
         [Fact]
-        public void ValidatePosition_ReturnsValidationResult()
+        public void ValidatePosition_ReturnsSuccessResult()
         {
             var expectedValidationResult = ValidationResult.Success;
             var mockBetTypeValidator = Substitute.For<IBetTypeValidator>();
@@ -35,6 +36,20 @@ namespace Roulette.Tests.Handlers
 
             result.Should().Be(expectedValidationResult);
         }
+
+        [Fact]
+        public void ValidatePosition_ReturnsInvalidPositionResult()
+        {
+            var expectedValidationResult = new InvalidPositionValidationResult(null, BetType.Single);
+            var mockBetTypeValidator = Substitute.For<IBetTypeValidator>();
+            mockBetTypeValidator.ValidatePosition(Arg.Any<int?>()).Returns(expectedValidationResult);
+            var betTypeHandler = new SingleBetTypeHandler(mockBetTypeValidator);
+
+            var result = betTypeHandler.ValidatePosition(null);
+
+            result.Should().Be(expectedValidationResult);
+        }
+
 
         [Fact]
         public void IsWinningBet_ReturnsTrueWhenWon()

@@ -1,17 +1,17 @@
-﻿using Roulette.Models;
+﻿using Roulette.Constants;
+using Roulette.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Roulette.Constants;
 
 namespace Roulette.Validators
 {
     public class SplitHorizontalBetTypeValidator : IBetTypeValidator
     {
-        public ValidationResult ValidatePosition(int position = 0)
+        public ValidationResult ValidatePosition(int? position)
         {
-            return Positions.SplitHorizontalPositions.Contains(position)
+            return position != null && Positions.SplitHorizontalPositions.Contains(position.Value)
                 ? ValidationResult.Success
-                : new InvalidBetTypePositionValidationResult(position, BetType.SplitHorizontal);
+                : new InvalidPositionValidationResult(position, BetType.SplitHorizontal);
         }
     }
 }

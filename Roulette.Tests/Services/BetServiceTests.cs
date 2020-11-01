@@ -86,7 +86,7 @@ namespace Roulette.Tests.Services
             var mockGameRepository = Substitute.For<IGameRepository>();
             mockGameRepository.GetById(Arg.Any<Guid>()).Returns(new Game());
             var mockBetRepository = Substitute.For<IBetRepository>();
-            mockBetRepository.CreateBet(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<BetType>(), Arg.Any<int>(), Arg.Any<double>())
+            mockBetRepository.CreateBet(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<BetType>(), Arg.Any<int?>(), Arg.Any<double>())
                 .Returns(expectedBet);
 
             var service = new BetService(

@@ -2,9 +2,9 @@
 using Roulette.Models;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Roulette.Constants;
 
 namespace Roulette.Repositories
 {
@@ -14,8 +14,10 @@ namespace Roulette.Repositories
     {
         private static readonly ConcurrentDictionary<Guid, Bet> Bets = new ConcurrentDictionary<Guid, Bet>();
 
-        public Task<Bet> CreateBet(Guid gameId, Guid customerId, BetType betType, int position, double amount)
+        public Task<Bet> CreateBet(Guid gameId, Guid customerId, BetType betType, int? position, double amount)
         {
+            ValidateBetDoesNotAlreadyExist(gameId, customerId, betType, position);
+
             var betId = Guid.NewGuid();
             var bet = new Bet
             {
@@ -37,7 +39,7 @@ namespace Roulette.Repositories
 
         public Task<Bet> UpdateBet(Guid id, double amount)
         {
-            if(!Bets.TryGetValue(id, out var bet))
+            if (!Bets.TryGetValue(id, out var bet))
             {
                 throw new BetNotFoundException(id);
             }
@@ -82,6 +84,21 @@ namespace Roulette.Repositories
                 .Select(bet => bet.Value);
 
             return Task.FromResult(bets.ToArray());
+        }
+
+        private void ValidateBetDoesNotAlreadyExist(Guid gameId, Guid customerId, BetType betType, int? position)
+        {
+            var existingBet = Bets
+                .FirstOrDefault(bet => 
+                    bet.Value.GameId == gameId &&
+                    bet.Value.CustomerId == customerId &&
+                                       bet.Value.BetType == betType &&
+                                       bet.Value.Position == position);
+
+            if (existingBet.Value != null)
+            {
+                throw new BetAlreadyExistsException(betType, position);
+            }
         }
     }
 }

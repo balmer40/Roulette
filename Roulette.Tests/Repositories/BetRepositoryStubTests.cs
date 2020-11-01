@@ -66,6 +66,27 @@ namespace Roulette.Tests.Repositories
         }
 
         [Fact]
+        public async Task CreateBet_ThrowsWhenBetAlreadyExists()
+        {
+            var expectedGameId = Guid.NewGuid();
+            var expectedCustomerId = Guid.NewGuid();
+            var expectedBetType = BetType.Single;
+            var expectedPosition = 1;
+            var expectedAmount = 50.0;
+            var repository = new BetRepositoryStub();
+
+            await repository.CreateBet(
+                expectedGameId,
+                expectedCustomerId,
+                expectedBetType,
+                expectedPosition,
+                expectedAmount);
+
+            await Assert.ThrowsAsync<BetAlreadyExistsException>(() =>
+                repository.CreateBet(expectedGameId, expectedCustomerId, expectedBetType, expectedPosition, 1));
+        }
+
+        [Fact]
         public async Task GetAllBetsForGame_ReturnsEmptyArrayWhenNoBetsForGameId()
         {
             var repository = new BetRepositoryStub();

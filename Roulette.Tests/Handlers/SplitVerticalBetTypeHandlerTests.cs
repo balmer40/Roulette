@@ -25,7 +25,7 @@ namespace Roulette.Tests.Handlers
         }
 
         [Fact]
-        public void ValidatePosition_ReturnsValidationResult()
+        public void ValidatePosition_ReturnsSuccessResult()
         {
             var expectedValidationResult = ValidationResult.Success;
             var mockBetTypeValidator = Substitute.For<IBetTypeValidator>();
@@ -33,6 +33,19 @@ namespace Roulette.Tests.Handlers
             var betTypeHandler = new SplitVerticalBetTypeHandler(mockBetTypeValidator);
 
             var result = betTypeHandler.ValidatePosition(1);
+
+            result.Should().Be(expectedValidationResult);
+        }
+
+        [Fact]
+        public void ValidatePosition_ReturnsInvalidPositionResult()
+        {
+            var expectedValidationResult = new InvalidPositionValidationResult(null, BetType.SplitVertical);
+            var mockBetTypeValidator = Substitute.For<IBetTypeValidator>();
+            mockBetTypeValidator.ValidatePosition(Arg.Any<int?>()).Returns(expectedValidationResult);
+            var betTypeHandler = new SplitVerticalBetTypeHandler(mockBetTypeValidator);
+
+            var result = betTypeHandler.ValidatePosition(null);
 
             result.Should().Be(expectedValidationResult);
         }

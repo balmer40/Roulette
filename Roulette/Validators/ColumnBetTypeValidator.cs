@@ -1,17 +1,18 @@
-﻿using Roulette.Models;
+﻿using Roulette.Constants;
+using Roulette.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Roulette.Constants;
 
 namespace Roulette.Validators
 {
     public class ColumnBetTypeValidator : IBetTypeValidator
     {
-        public ValidationResult ValidatePosition(int position = 0)
+        public ValidationResult ValidatePosition(int? position)
         {
-            return Positions.ColumnPositions.Contains(position)
+
+            return position != null && Positions.ColumnPositions.Contains(position.Value)
                 ? ValidationResult.Success
-                : new InvalidBetTypePositionValidationResult(position, BetType.Column);
+                : new InvalidPositionValidationResult(position, BetType.Column);
         }
     }
 }

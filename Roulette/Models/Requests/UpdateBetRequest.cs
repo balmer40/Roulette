@@ -1,5 +1,4 @@
 ﻿using Roulette.Constants;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Roulette.Models.Requests
@@ -7,7 +6,7 @@ namespace Roulette.Models.Requests
     public class UpdateBetRequest
     {
         [Required]
-        [Range(Ranges.MinimumBet, Ranges.MaximumBet - 1)] //can only update to max 10k, and the minimum bet already can be 1
+        [Range(Ranges.MinimumAmount, Ranges.MaximumAmount)]
         [RegularExpression(RegularExpressions.Amount, ErrorMessage = "Amount can only have two decimal places")]
         public double Amount { get; set; }
     }

@@ -7,7 +7,7 @@ namespace Roulette.Handlers
     {
         BetType BetType { get; }
 
-        ValidationResult ValidatePosition(int position = 0);
+        ValidationResult ValidatePosition(int? position);
 
         bool IsWinningBet(int winningNumber, int position = 0);
 

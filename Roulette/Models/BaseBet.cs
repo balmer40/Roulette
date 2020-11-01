@@ -10,6 +10,6 @@ namespace Roulette.Models
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public BetType BetType { get; set; }
 
-        public int Position { get; set; }
+        public int? Position { get; set; }
     }
 }

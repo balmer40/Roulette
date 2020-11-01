@@ -18,20 +18,33 @@ namespace Roulette.Tests.Handlers
             var mockBetTypeValidator = Substitute.For<IBetTypeValidator>();
             var betTypeHandler = new RedBetTypeHandler(mockBetTypeValidator);
 
-            betTypeHandler.ValidatePosition();
+            betTypeHandler.ValidatePosition(null);
 
-            mockBetTypeValidator.Received().ValidatePosition();
+            mockBetTypeValidator.Received().ValidatePosition(null);
         }
 
         [Fact]
-        public void ValidatePosition_ReturnsValidationResult()
+        public void ValidatePosition_ReturnsSuccessResult()
         {
             var expectedValidationResult = ValidationResult.Success;
             var mockBetTypeValidator = Substitute.For<IBetTypeValidator>();
             mockBetTypeValidator.ValidatePosition(Arg.Any<int>()).Returns(expectedValidationResult);
             var betTypeHandler = new RedBetTypeHandler(mockBetTypeValidator);
 
-            var result = betTypeHandler.ValidatePosition();
+            var result = betTypeHandler.ValidatePosition(null);
+
+            result.Should().Be(expectedValidationResult);
+        }
+
+        [Fact]
+        public void ValidatePosition_ReturnsPositionNotAllowedResult()
+        {
+            var expectedValidationResult = new PositionNotAllowedValidationResult(BetType.Red);
+            var mockBetTypeValidator = Substitute.For<IBetTypeValidator>();
+            mockBetTypeValidator.ValidatePosition(Arg.Any<int>()).Returns(expectedValidationResult);
+            var betTypeHandler = new RedBetTypeHandler(mockBetTypeValidator);
+
+            var result = betTypeHandler.ValidatePosition(1);
 
             result.Should().Be(expectedValidationResult);
         }

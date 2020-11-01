@@ -5,11 +5,11 @@ namespace Roulette.Validators
 {
     public class SplitVerticalBetTypeValidator : IBetTypeValidator
     {
-        public ValidationResult ValidatePosition(int position = 0)
+        public ValidationResult ValidatePosition(int? position)
         {
-            return position != 0
+            return position != null && position != 0
                 ? ValidationResult.Success
-                : new InvalidBetTypePositionValidationResult(position, BetType.SplitVertical);
+                : new InvalidPositionValidationResult(position, BetType.SplitVertical);
         }
     }
 }

@@ -19,17 +19,18 @@ namespace Roulette.Tests.Validators
             result.Should().Be(ValidationResult.Success);
         }
 
-        [Fact]
-        public void ValidatePosition_ReturnsInvalidValidationResultWhenInvalidPosition()
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData(0)]
+        public void ValidatePosition_ReturnsInvalidValidationResultWhenInvalidPosition(int? expectedPosition)
         {
-            var expectedPosition = 0;
             var validator = new ColumnBetTypeValidator();
 
             var result = validator.ValidatePosition(expectedPosition);
 
-            result.Should().BeOfType(typeof(InvalidBetTypePositionValidationResult));
+            result.Should().BeOfType(typeof(InvalidPositionValidationResult));
             result.ErrorMessage.Should().Contain(BetType.Column.ToString());
-            result.ErrorMessage.Should().Contain(expectedPosition.ToString());
         }
     }
 }

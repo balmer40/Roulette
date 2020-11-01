@@ -27,7 +27,7 @@ namespace Roulette.Filters
                     _logger.LogWarning($"GameStatusException occurred: {exception.Message}");
                     context.Result = new BadRequestObjectResult(exception.Message);
                     break;
-                case BetTypeNotConfiguredException exception:
+                case BadRequestBetException exception:
                     _logger.LogWarning($"BetTypeNotConfiguredException occurred: {exception.Message}");
                     context.Result = new BadRequestObjectResult(exception.Message);
                     break;

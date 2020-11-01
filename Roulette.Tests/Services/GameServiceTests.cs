@@ -155,6 +155,26 @@ namespace Roulette.Tests.Services
         }
 
         [Fact]
+        public async Task PlayGame_ClosesGameWhenNoBets()
+        {
+            var expectedGameId = Guid.NewGuid();
+            var mockRepository = Substitute.For<IGameRepository>();
+            mockRepository.GetById(Arg.Any<Guid>()).Returns(new Game { GameStatus = GameStatus.BettingClosed });
+            var mockGameService = Substitute.For<ISpinWheelService>();
+            mockGameService.GetWinningNumber().Returns(1);
+
+            var service = new GameService(
+                mockRepository,
+                Substitute.For<IBetRepository>(),
+                mockGameService,
+                Substitute.For<IBetTypeHandlerProvider>());
+
+            await service.PlayGame(expectedGameId);
+
+            await mockRepository.Received().CloseGame(expectedGameId);
+        }
+
+        [Fact]
         public async Task PlayGame_ReturnsExpectedResponseWhenNoBets()
         {
             var expectedGameId = Guid.NewGuid();
@@ -246,7 +266,7 @@ namespace Roulette.Tests.Services
 
             await service.PlayGame(Guid.NewGuid());
 
-            mockBetTypeHandler.Received().IsWinningBet(expectedBetPosition, expectedWinningNumber);
+            mockBetTypeHandler.Received().IsWinningBet( expectedWinningNumber, expectedBetPosition);
         }
 
         [Fact]
